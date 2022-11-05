@@ -10,33 +10,36 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class VotingController {
 
-    //get know vote
-    @GetMapping("/api/v1/vote")
-    public VoteDto getVote() {
+    //get to know vote
+    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.GET)
+    //@GetMapping("/api/v1/vote")
+    public ResponseEntity<VoteDto> getVote() {
         System.out.println("get vote");
-        return new VoteDto();
+        return ResponseEntity.ok(new VoteDto());
     }
 
     //to vote
-
-    @PostMapping("/api/v1/vote")
-    public VoteDto toVote(@RequestBody VoteDto voteDto) {
+    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.POST)
+    //@PostMapping("/api/v1/vote")
+    public ResponseEntity<VoteDto> toVote(@RequestBody VoteDto voteDto) {
         System.out.println("send vote for rest");
         System.out.println("input json -> " + voteDto);
-        return new VoteDto();
+        return ResponseEntity.ok(new VoteDto());
     }
 
-    @DeleteMapping("/api/v1/vote")
+    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.DELETE)
+    //@DeleteMapping("/api/v1/vote")
     public void deleteVote() {
         System.out.println("deleting vote");
     }
 
-    @PutMapping("/api/v1/vote")
-    public VoteDto updateVote(@RequestBody VoteDto voteDto) {
+    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.PUT)
+    //@PutMapping("/api/v1/vote")
+    public ResponseEntity<VoteDto> updateVote(@RequestBody VoteDto voteDto) {
         System.out.println("some logic for checking time < or > 11 am");
         System.out.println("input json -> " + voteDto);
         System.out.println("updating vote if possible");
-        return new VoteDto();
+        return ResponseEntity.ok(new VoteDto());
     }
 
     @ExceptionHandler
