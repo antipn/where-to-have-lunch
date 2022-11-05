@@ -2,16 +2,24 @@ package controllers;
 
 import dto.*;
 import exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import services.RestaurantAndMenuService;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class RestaurantController {
+
+    private final RestaurantAndMenuService restaurantService;
+
+    @Autowired
+    public RestaurantController(RestaurantAndMenuService restaurantService) {
+        this.restaurantService = restaurantService;
+    }
 
     //restaurants
 
@@ -19,7 +27,7 @@ public class RestaurantController {
     @RequestMapping(value = "app/v1/restaurants", method = RequestMethod.GET)
     //@GetMapping("/app/v1/restaurants")
     public ResponseEntity<List<RestaurantDto>> getAllRestaurants() {
-        List<RestaurantDto> result = new ArrayList<>();
+        List<RestaurantDto> result = restaurantService.findAllRestaurants();
         System.out.println("showing all restaurants");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -29,7 +37,7 @@ public class RestaurantController {
     //@GetMapping("api/v1/restaurants/{rest_id}")
     public ResponseEntity<?> getOneRestaurant(@PathVariable(name = "rest_id") int restId) {
         System.out.println("showing one restaurants with id = " + restId);
-        return ResponseEntity.ok(new RestaurantDto());
+        return ResponseEntity.ok(restaurantService.findRestaurantById(restId));
     }
 
     //input new restaurant input json
@@ -38,19 +46,26 @@ public class RestaurantController {
     public ResponseEntity<RestaurantDto> addRestaurant(@RequestBody RestaurantDto restaurantDto) {
         System.out.println("add new restaurant");
         System.out.println("input jason " + restaurantDto);
-        //checking is new?
-        //set id for json restaurant for next saving
-        return ResponseEntity.ok(new RestaurantDto());
+        //checking is new? cause json with new restaurant came without id!!!
+        //set id for json restaurant for saving
+        restaurantDto.setRestId(1111); //some id check with Sasha what put in id now!!!!
+        return ResponseEntity.ok(restaurantService.saveRestaurant(restaurantDto));
     }
 
     //update restaurant by id + input json
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}", method = RequestMethod.PUT)
     //@PutMapping("/api/v1/restaurants/{rest_id}")
-    public ResponseEntity<RestaurantDto> updateRestaurant(@RequestBody RestaurantDto restaurantDto, @PathVariable(name = "rest_id") int restId) {
+    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDto restaurantDto, @PathVariable(name = "rest_id") int restId) {
         System.out.println("updating restaurant by id = " + restId);
-        System.out.println("input jason " + restaurantDto);
-        //updating
-        return ResponseEntity.ok(new RestaurantDto());
+        System.out.println("input jason potentially with id" + restaurantDto);
+        if (restaurantDto.getRestId() == restId) {
+
+            return ResponseEntity.ok(restaurantService.saveRestaurant(restaurantDto));
+        } else {
+            // we can not save
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("input ID <> JSON ID");
+            // new ResponseEntity<>(HttpStatus.BAD_REQUEST); //ask Sasha what is better
+        }
     }
 
     //delete restaurant by id
@@ -58,7 +73,7 @@ public class RestaurantController {
     //@DeleteMapping("/api/v1/restaurants/{rest_id}")
     public void deleteRestaurant(@PathVariable(name = "rest_id") int restId) {
         System.out.println("deleting restaurant by id = " + restId);
-
+        restaurantService.deleteRestaurant(restId);
     }
 
     //rating for all restaurants
@@ -66,16 +81,15 @@ public class RestaurantController {
     //@GetMapping("/api/v1/restaurants/rating")
     public ResponseEntity<RestairantScoreDto> getRating() {
         System.out.println("get rating for all restaurants");
-        return ResponseEntity.ok(new RestairantScoreDto());
+        return ResponseEntity.ok(restaurantService.getRestaurantsScores());
     }
-
 
     //rating for all restaurants on the date
     @RequestMapping(value = "/api/v1/restaurants/rating?date={rating_date}")
     //@GetMapping("/api/v1/restaurants/rating?date={rating_date}")
     public ResponseEntity<RestairantScoreDto> getRatingOnDate(@PathVariable(name = "rating_date") LocalDate localDate) {
         System.out.println("get rating for all restaurants on the date " + localDate);
-        return ResponseEntity.ok(new RestairantScoreDto());
+        return ResponseEntity.ok(restaurantService.getRestaurantsScoresOnDate(localDate));
     }
 
     //menu
@@ -84,20 +98,18 @@ public class RestaurantController {
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}/menu", method = RequestMethod.GET)
     //@GetMapping("/api/v1/restaurants/{rest_id}/menu")
     public ResponseEntity<MenuDto> getMenu(@PathVariable(name = "rest_id") int restId) {
-        MenuDto result = new MenuDto();
         System.out.println("get menu for restaurant with id = " + restId);
-        System.out.println("output json menu -> " + result);
-        return ResponseEntity.ok(new MenuDto());
+        System.out.println("output json menu -> ");
+        return ResponseEntity.ok(restaurantService.findMenu(restId));
     }
 
-    //showing by rest id the menu on the date
+    //showing by restid the menu on the date
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}/menu/{menu_date}", method = RequestMethod.GET)
     //@GetMapping("/api/v1/restaurants/{rest_id}/menu/{menu_date}")
     public ResponseEntity<MenuDto> getMenu(@PathVariable(name = "rest_id") int restId, @PathVariable(name = "menu_date") LocalDate localDate) {
-        MenuDto result = new MenuDto();
         System.out.println("get menu for restaurant with id = " + restId + " on the date " + localDate);
-        System.out.println("output json menu on the date " + localDate + " -> " + result);
-        return ResponseEntity.ok(new MenuDto());
+        System.out.println("output json menu on the date " + localDate + " -> ");
+        return ResponseEntity.ok(restaurantService.findMenuOnDate(restId, localDate));
     }
 
     //add menu to restaurant by rest id
@@ -106,16 +118,19 @@ public class RestaurantController {
     public ResponseEntity<MenuDto> addMenu(@RequestBody MenuDto menuDto, @PathVariable(name = "rest_id") int restId) {
         System.out.println("add menu for rest id = " + restId);
         System.out.println("output json menu -> " + menuDto);
-        return ResponseEntity.ok(new MenuDto());
+        return ResponseEntity.ok(restaurantService.saveMenu(restId));
     }
+
+    //there is no PUT method because we dont responsible for changing history of meal in our app
+    //all errors in menu might be change in the same day by deleting and again new posting
 
     //delete menu in rest dy id
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}/menu", method = RequestMethod.DELETE)
     //@DeleteMapping("/api/v1/restaurants/{rest_id}/menu")
     public void deleteMenu(@PathVariable(name = "rest_id") int restId) {
         System.out.println("deleting menu in rest by id = " + restId);
+        restaurantService.deleteMenu(restId);
     }
-
 
     @ExceptionHandler
     public ResponseEntity<EntityNotFoundResponse> handleException(EntityNotFoundException ex) {
