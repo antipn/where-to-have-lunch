@@ -42,11 +42,11 @@ public class VotingController {
 
     @RequestMapping(value = "/api/v1/vote", method = RequestMethod.DELETE)
     //@DeleteMapping("/api/v1/vote")
-    public void deleteVote() {
+    public ResponseEntity<Void> deleteVote() {
         System.out.println("deleting vote");
         int userId = 22222;// get user id here
         votingService.deleteVote(userId);
-
+        return new ResponseEntity<Void> (HttpStatus.OK);
     }
 
     @RequestMapping(value = "/api/v1/vote", method = RequestMethod.PUT)

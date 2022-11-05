@@ -55,25 +55,23 @@ public class RestaurantController {
     //update restaurant by id + input json
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}", method = RequestMethod.PUT)
     //@PutMapping("/api/v1/restaurants/{rest_id}")
-    public ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDto restaurantDto, @PathVariable(name = "rest_id") int restId) {
+    public ResponseEntity<RestaurantDto> updateRestaurant(@RequestBody RestaurantDto restaurantDto, @PathVariable(name = "rest_id") int restId) {
         System.out.println("updating restaurant by id = " + restId);
         System.out.println("input jason potentially with id" + restaurantDto);
         if (restaurantDto.getRestId() == restId) {
-
             return ResponseEntity.ok(restaurantService.saveRestaurant(restaurantDto));
-        } else {
-            // we can not save
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("input ID <> JSON ID");
-            // new ResponseEntity<>(HttpStatus.BAD_REQUEST); //ask Sasha what is better
+        } else {// we can not save
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     //delete restaurant by id
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}", method = RequestMethod.DELETE)
     //@DeleteMapping("/api/v1/restaurants/{rest_id}")
-    public void deleteRestaurant(@PathVariable(name = "rest_id") int restId) {
+    public ResponseEntity<Void> deleteRestaurant(@PathVariable(name = "rest_id") int restId) {
         System.out.println("deleting restaurant by id = " + restId);
         restaurantService.deleteRestaurant(restId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     //rating for all restaurants
@@ -85,7 +83,7 @@ public class RestaurantController {
     }
 
     //rating for all restaurants on the date
-    @RequestMapping(value = "/api/v1/restaurants/rating?date={rating_date}")
+    @RequestMapping(value = "/api/v1/restaurants/rating?date={rating_date}", method = RequestMethod.GET)
     //@GetMapping("/api/v1/restaurants/rating?date={rating_date}")
     public ResponseEntity<RestairantScoreDto> getRatingOnDate(@PathVariable(name = "rating_date") LocalDate localDate) {
         System.out.println("get rating for all restaurants on the date " + localDate);
@@ -127,9 +125,10 @@ public class RestaurantController {
     //delete menu in rest dy id
     @RequestMapping(value = "/api/v1/restaurants/{rest_id}/menu", method = RequestMethod.DELETE)
     //@DeleteMapping("/api/v1/restaurants/{rest_id}/menu")
-    public void deleteMenu(@PathVariable(name = "rest_id") int restId) {
+    public ResponseEntity<Void> deleteMenu(@PathVariable(name = "rest_id") int restId) {
         System.out.println("deleting menu in rest by id = " + restId);
         restaurantService.deleteMenu(restId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ExceptionHandler
