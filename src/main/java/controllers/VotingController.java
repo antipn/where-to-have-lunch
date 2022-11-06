@@ -7,55 +7,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import services.VotingService;
+import services.VotingServiceImpl;
 
 @RestController
 public class VotingController {
-
-    private final VotingService votingService;
+    private final VotingServiceImpl votingService;
 
     @Autowired
-    public VotingController(VotingService votingService) {
+    public VotingController(VotingServiceImpl votingService) {
         this.votingService = votingService;
     }
 
-    //get to know vote
-    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.GET)
-    //@GetMapping("/api/v1/vote")
-    //receive there userId
-    //discuss it
-    public ResponseEntity<VoteDto> getVote() {
-        System.out.println("get vote");
-        Integer userId = 2222;// get user id here
-        return ResponseEntity.ok(votingService.getVote(userId));
-    }
-
-    //to vote
-    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.POST)
-    //@PostMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> toVote(@RequestBody VoteDto voteDto) {
+    //vote
+    @PostMapping("/api/v1/vote")
+    public ResponseEntity<VoteDto> createVote(@RequestBody VoteDto voteDto) {
         System.out.println("send vote for rest");
         System.out.println("input json -> " + voteDto);
         Integer userId = 2222;// get user id here
-        return ResponseEntity.ok(votingService.toVote(userId, voteDto));
+        return ResponseEntity.ok(votingService.saveVote(userId, voteDto));
     }
 
-    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.DELETE)
-    //@DeleteMapping("/api/v1/vote")
-    public ResponseEntity<Void> deleteVote() {
-        System.out.println("deleting vote");
-        int userId = 22222;// get user id here
-        votingService.deleteVote(userId);
-        return new ResponseEntity<Void> (HttpStatus.OK);
+    @GetMapping("/api/v1/vote")
+    public ResponseEntity<VoteDto> readVote() {
+        System.out.println("get vote");
+        Integer userId = 2222;// get user id here
+        return ResponseEntity.ok(votingService.findVote(userId));
     }
 
-    @RequestMapping(value = "/api/v1/vote", method = RequestMethod.PUT)
-    //@PutMapping("/api/v1/vote")
+    @PutMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> updateVote(@RequestBody VoteDto voteDto) {
         System.out.println("some logic for checking time < or > 11 am will be processed in service layer");
         System.out.println("input json -> " + voteDto);
         int userId = 22222;// get user id here
         return ResponseEntity.ok(votingService.updateVote(userId, voteDto));
+    }
+
+    @DeleteMapping("/api/v1/vote")
+    public ResponseEntity<Void> deleteVote() {
+        System.out.println("deleting vote");
+        int userId = 22222;// get user id here
+        votingService.deleteVote(userId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ExceptionHandler
