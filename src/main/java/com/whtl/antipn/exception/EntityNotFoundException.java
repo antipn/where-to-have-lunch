@@ -1,4 +1,4 @@
-package exception;
+package com.whtl.antipn.exception;
 
 public class EntityNotFoundException extends RuntimeException {
     private String entityName;

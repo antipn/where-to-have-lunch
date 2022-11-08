@@ -1,13 +1,13 @@
-package controllers;
+package com.whtl.antipn.controllers;
 
-import dto.EntityNotFoundResponse;
-import dto.VoteDto;
-import exception.EntityNotFoundException;
+import com.whtl.antipn.dto.VoteDto;
+import com.whtl.antipn.exception.EntityNotFoundException;
+import com.whtl.antipn.services.VotingServiceImpl;
+import com.whtl.antipn.dto.EntityNotFoundResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import services.VotingServiceImpl;
 
 @RestController
 public class VotingController {

@@ -1,9 +1,9 @@
-package services;
+package com.whtl.antipn.services;
 
-import dto.VoteDto;
-import org.springframework.stereotype.Component;
+import com.whtl.antipn.dto.VoteDto;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class VotingServiceImpl implements VotingService{
     public VoteDto findVote(int userId) {
         //check the vote of user
