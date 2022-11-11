@@ -24,9 +24,11 @@ public interface RestaurantAndMenuService {
     //menu
     public List<MenuDto> findMenu(int restId);
 
-    public MenuDto findMenuOnDate(int restId, LocalDate localDate);
+    public List<MenuDto> findMenuOnDate(LocalDate localDate, int restId);
 
-    public List<MenuDto> saveMenu(List<MenuDto> menuInput, int restId);
+    public List<MenuDto> saveMenu(LocalDate localDate, int restId, List<MenuDto> menuInput);
 
-    public void deleteMenu(int id);
+    public void deleteMenu(LocalDate localDate, int restId);
+
+    public List<MenuDto> updateMenu(LocalDate localDate, int restId, List<MenuDto> menuDtoList);
 }

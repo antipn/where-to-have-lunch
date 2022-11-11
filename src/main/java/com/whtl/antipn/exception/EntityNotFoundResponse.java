@@ -1,4 +1,4 @@
-package com.whtl.antipn.dto;
+package com.whtl.antipn.exception;
 
 public class EntityNotFoundResponse {
     private int status;

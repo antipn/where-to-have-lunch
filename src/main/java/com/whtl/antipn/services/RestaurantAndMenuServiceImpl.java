@@ -1,24 +1,18 @@
 package com.whtl.antipn.services;
 
-import com.whtl.antipn.Utils.Converters;
-import com.whtl.antipn.Utils.ValidationUtil;
+import com.whtl.antipn.mapper.RestaurantScoreMapper;
 import com.whtl.antipn.dto.MenuDto;
 import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.dto.RestaurantDto;
-import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.mapper.MenuMapper;
 import com.whtl.antipn.mapper.RestaurantMapper;
 import com.whtl.antipn.model.Restaurant;
-import com.whtl.antipn.model.Vote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.whtl.antipn.repositories.InMemoryRepository;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
@@ -26,17 +20,15 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
     InMemoryRepository repository;
     RestaurantMapper restaurantMapper;
     MenuMapper menuMapper;
-    Converters converters;
+    RestaurantScoreMapper restaurantScoreMapper;
 
     @Autowired
-    public RestaurantAndMenuServiceImpl(InMemoryRepository repository, RestaurantMapper restaurantMapper, Converters converters, MenuMapper menuMapper) {
+    public RestaurantAndMenuServiceImpl(InMemoryRepository repository, RestaurantMapper restaurantMapper, RestaurantScoreMapper restaurantScoreMapper, MenuMapper menuMapper) {
         this.repository = repository;
         this.restaurantMapper = restaurantMapper;
-        this.converters = converters;
+        this.restaurantScoreMapper = restaurantScoreMapper;
         this.menuMapper = menuMapper;
     }
-    //RestaurantRepository restaurantRepository;
-    //VotingRepository votingRepository;
 
     public List<RestaurantDto> findAllRestaurants() {
         List<Restaurant> restaurants = repository.findAllRestaurants();
@@ -50,39 +42,41 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
     public RestaurantDto createRestaurant(RestaurantDto restaurantDto) { //discus this
         Restaurant entity = restaurantMapper.toEntity(restaurantDto);
         repository.saveRestaurant(entity);
-        return restaurantMapper.toDto(repository.saveRestaurant(entity));//what saved in entity that return in dto
+        return restaurantMapper.toDto(repository.saveRestaurant(entity));
     }
 
     public void deleteRestaurant(int restId) {
-        ValidationUtil.checkNotFoundWithId(repository.deleteRestaurant(restId), restId);
+        repository.deleteRestaurant(restId); //ValidationUtil.checkNotFoundWithId(
     }
 
     public List<RestaurantScoreDto> findRestaurantsScores() {
-        LocalDate localDateToday = LocalDate.of(2022, 11, 3);
-        return converters.toDto(repository.findAllRestaurantsScoreOnToday(localDateToday));
+        LocalDate localDate = LocalDate.now(); //#1
+        return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
     }
 
     public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate) {
-        return converters.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
-
+        return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
     }
 
     public List<MenuDto> findMenu(int restId) {
         return menuMapper.toDtoList(repository.findMenuByRestId(restId));
     }
 
-    public MenuDto findMenuOnDate(int restId, LocalDate localDate) {
-        // find menu by id and date in repo
-        return null;
+    public List<MenuDto> findMenuOnDate(LocalDate localDate, int restId) {
+        return menuMapper.toDtoList(repository.findMenuByRestIdAndDate(localDate, restId));
     }
 
-    public List<MenuDto> saveMenu(List<MenuDto> menuInput, int restId) {
-
-        return menuMapper.toDtoList(repository.saveMenu(menuMapper.toEntityList(menuInput),restId));
+    public List<MenuDto> saveMenu(LocalDate localDate, int restId, List<MenuDto> menuInput) {
+        return menuMapper.toDtoList(repository.saveMenu(localDate, restId, menuMapper.toEntityList(menuInput)));
     }
 
-    public void deleteMenu(int restId) {
-        ValidationUtil.checkNotFoundWithId(repository.deleteMenuByRestId(restId), restId);
+    @Override
+    public List<MenuDto> updateMenu(LocalDate localDate, int restId, List<MenuDto> menuDtoList) {
+        return saveMenu(localDate, restId, menuDtoList);
+    }
+
+    public void deleteMenu(LocalDate localDate, int restId) {
+        repository.deleteMenuByRestIdAndDate(localDate, restId); //ValidationUtil.checkNotFoundWithId(
     }
     //после перехода на jpa это пригодится
     //    private void checkById(@PathVariable int id, String entityName, String comment) {

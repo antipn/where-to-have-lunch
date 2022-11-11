@@ -12,11 +12,14 @@ public class MenuDto {
         this.dishPrice = dishPrice;
     }
 
-    public String getDishNaming() {
+    public MenuDto() {
+    }
+
+    public String getDishName() {
         return dishName;
     }
 
-    public void setDishNaming(String dishName) {
+    public void setDishName(String dishName) {
         this.dishName = dishName;
     }
 

@@ -1,8 +1,5 @@
 package com.whtl.antipn.dto;
 
-import lombok.Data;
-
-
 public class VoteDto {
     private Integer userId;
     private Integer restaurantId;
@@ -27,4 +24,5 @@ public class VoteDto {
     public void setRestaurantId(Integer restaurantId) {
         this.restaurantId = restaurantId;
     }
+
 }

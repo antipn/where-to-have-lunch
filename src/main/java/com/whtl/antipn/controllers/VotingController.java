@@ -1,9 +1,12 @@
 package com.whtl.antipn.controllers;
 
 import com.whtl.antipn.dto.VoteDto;
+import com.whtl.antipn.exception.VoteIsNotAllowedResponse;
+import com.whtl.antipn.dto.input.VoteDtoIncome;
 import com.whtl.antipn.exception.EntityNotFoundException;
+import com.whtl.antipn.exception.VoteIsNotAllowedException;
 import com.whtl.antipn.services.VotingServiceImpl;
-import com.whtl.antipn.dto.EntityNotFoundResponse;
+import com.whtl.antipn.exception.EntityNotFoundResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,32 +23,36 @@ public class VotingController {
 
     //vote
     @PostMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> createVote(@RequestBody VoteDto voteDto) {
-        System.out.println("send vote for rest");
-        System.out.println("input json -> " + voteDto);
-        Integer userId = 2222;// get user id here
-        return ResponseEntity.ok(votingService.saveVote(userId, voteDto));
+    public ResponseEntity<VoteDto> createVote(@RequestBody VoteDtoIncome voteDtoIncome) {
+        int userId = 1;// please get userId after applying spring security
+        VoteDto voteDto = votingService.saveVote(userId, voteDtoIncome);
+        if (voteDto != null && voteDtoIncome.getRestaurantId() == voteDto.getRestaurantId()) {
+            return ResponseEntity.ok(voteDto);
+        } else {
+            throw new VoteIsNotAllowedException(userId, "The vote can not be processed due to time for voting is over");
+        }
     }
 
     @GetMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> readVote() {
-        System.out.println("get vote");
-        Integer userId = 2222;// get user id here
+        int userId = 1;// // please get userId after applying spring security
         return ResponseEntity.ok(votingService.findVote(userId));
     }
 
     @PutMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> updateVote(@RequestBody VoteDto voteDto) {
-        System.out.println("some logic for checking time < or > 11 am will be processed in service layer");
-        System.out.println("input json -> " + voteDto);
-        int userId = 22222;// get user id here
-        return ResponseEntity.ok(votingService.updateVote(userId, voteDto));
+    public ResponseEntity<VoteDto> updateVote(@RequestBody VoteDtoIncome voteDtoIncome) {
+        int userId = 1;// please get userId after applying spring security
+        VoteDto voteDto = votingService.updateVote(userId, voteDtoIncome);
+        if (voteDto != null) {
+            return ResponseEntity.ok(voteDto);
+        } else {
+            throw new VoteIsNotAllowedException(userId, "The vote can not  be processed due to time for voting is over");
+        }
     }
 
     @DeleteMapping("/api/v1/vote")
     public ResponseEntity<Void> deleteVote() {
-        System.out.println("deleting vote");
-        int userId = 22222;// get user id here
+        int userId = 1;// please get userId after applying spring security
         votingService.deleteVote(userId);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -61,4 +68,13 @@ public class VotingController {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<VoteIsNotAllowedResponse> handleException(VoteIsNotAllowedException ex) {
+        VoteIsNotAllowedResponse response = new VoteIsNotAllowedResponse();
+        response.setMessage(ex.getMessage());
+        response.setTimestamp(System.currentTimeMillis());
+        response.setUserId(ex.getUserId());
+        response.setStatus(HttpStatus.LOCKED.value());
+        return new ResponseEntity<>(response, HttpStatus.LOCKED);
+    }
 }

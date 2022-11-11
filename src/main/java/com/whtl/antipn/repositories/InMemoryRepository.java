@@ -1,17 +1,11 @@
 package com.whtl.antipn.repositories;
 
-import com.whtl.antipn.dto.RestaurantScoreDto;
-import com.whtl.antipn.dto.VoteDto;
 import com.whtl.antipn.exception.EntityNotFoundException;
-import com.whtl.antipn.exception.NotFoundException;
 import com.whtl.antipn.model.*;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.stereotype.Repository;
 
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryRepository {
@@ -21,17 +15,16 @@ public class InMemoryRepository {
     private final Map<Integer, Restaurant> mapRestaurants = new HashMap<>();
     private final Map<Integer, List<Menu>> mapMenus = new HashMap<>();
 
-    private final Map<LocalDate, Set<Vote>> mapVotes = new HashMap<>(); //map UserID and Set his votes
+    private final Map<LocalDate, Map<Integer, List<Menu>>> mapMenuByDates = new HashMap<>();  //map <Date map <resId, List<Menu>>
 
-//    private final Map<Integer, Map<LocalDate, Integer>> mapRestaurantsScore = new HashMap<>(); //rating map <restId, map<Data, Score>>
-//    private final Map<LocalDate, Integer> mapRestaurantsScoreInner = new HashMap<>(); //inner map of mapRating map<Data, Score>
+    private final Map<LocalDate, HashSet<Vote>> mapVotes = new HashMap<>(); //map LocalDate and Set his votes
 
     {
 
         //votes
-        mapVotes.put(LocalDate.of(2022, 11, 1), Set.of(new Vote(1, 1), new Vote(2, 2)));
-        mapVotes.put(LocalDate.of(2022, 11, 2), Set.of(new Vote(1, 2), new Vote(2, 2)));
-        mapVotes.put(LocalDate.of(2022, 11, 3), Set.of(new Vote(1, 1), new Vote(2, 1)));
+        mapVotes.put(LocalDate.of(2022, 11, 1), new HashSet<>(Arrays.asList(new Vote(1, 1), new Vote(2, 2))));
+        mapVotes.put(LocalDate.of(2022, 11, 2), new HashSet<>(Arrays.asList(new Vote(1, 2), new Vote(2, 2))));
+        mapVotes.put(LocalDate.of(2022, 11, 3), new HashSet<>(Arrays.asList(new Vote(1, 1), new Vote(2, 1))));
 
         //rating
 //        mapRestaurantsScoreInner.put(LocalDate.of(2022, 11, 1), 91); //for rest = 1
@@ -86,6 +79,9 @@ public class InMemoryRepository {
         mapMenus.put(2, menuRestTwo);
         mapMenus.put(3, menuRestThree);
 
+        mapMenuByDates.put(LocalDate.of(2022, 11, 1), mapMenus);
+        mapMenuByDates.put(LocalDate.of(2022, 11, 2), mapMenus);
+        mapMenuByDates.put(LocalDate.of(2022, 11, 3), mapMenus);
 
         //restaurants
 
@@ -96,17 +92,15 @@ public class InMemoryRepository {
         mapRestaurants.put(1, restaurant1);
         mapRestaurants.put(2, restaurant2);
         mapRestaurants.put(3, restaurant3);
-
-
     }
 
     public void showMaps() {//rempopary method for showing in console our data
-        mapRestaurants.forEach((k, v) -> System.out.println(k + " " + v));
-        mapMenus.forEach((k, v) -> System.out.println(k + " " + v));
-        mapUsers.forEach((k, v) -> System.out.println(k + " " + v));
-        mapRoles.forEach((k, v) -> System.out.println(k + " " + v));
+        //mapRestaurants.forEach((k, v) -> System.out.println(k + " " + v));
+        //mapMenus.forEach((k, v) -> System.out.println(k + " " + v));
+        //mapUsers.forEach((k, v) -> System.out.println(k + " " + v));
+        //mapRoles.forEach((k, v) -> System.out.println(k + " " + v));
+        //mapVotes.forEach((k, v) -> System.out.println(k + " " + v));
         //mapRestaurantsScore.forEach((k, v) -> System.out.println(k + " " + v));
-
     }
 
     //restaurants
@@ -135,10 +129,6 @@ public class InMemoryRepository {
         return mapRestaurants.remove(restId) != null;
     }
 
-//    public boolean deleteRestaurantInMap(int id) {
-//        return mapRestaurants.remove(id) != null;
-//    }
-
     //rating
 
     public Map<Integer, Integer> findAllRestaurantsScoreOnToday(LocalDate localDate) {
@@ -150,8 +140,8 @@ public class InMemoryRepository {
         //receives only votes on today which ones are just List of restId
         votesOnToday
                 .forEach(item -> onlyVotesByRestId.add(item.getRestaurantId()));
-        Map<Integer, Integer> scores = new HashMap<>();
         //map restId, restId repeat times
+        Map<Integer, Integer> scores = new HashMap<>();
         onlyVotesByRestId
                 .forEach(item -> scores.put(item, Collections.frequency(onlyVotesByRestId, item)));
         //scores.forEach((k, v) -> System.out.println("rest_id = " + k + " score on today = " + v));
@@ -159,23 +149,58 @@ public class InMemoryRepository {
     }
 
     public List<Menu> findMenuByRestId(int restId) {
-        return mapMenus.get(restId);
+        return mapMenuByDates.get(LocalDate.now()).get(restId);
     }
 
-    public List<Menu> findMenuByRestIdAndDate(int restId, LocalDate localDate) {
-        //preparing map with menus on old date but i belive we dont need it anymore
-        //our main finctionaly have to focus on actual=today menu only and of course rating rests
-        return mapMenus.get(restId);
+    public List<Menu> findMenuByRestIdAndDate(LocalDate localDate, int restId) {
+        if (!mapMenuByDates.containsKey(localDate)) {
+            return null;
+        }
+        return mapMenuByDates.get(localDate).get(restId);
     }
 
-    public boolean deleteMenuByRestId(int restId) {
-        return mapMenus.remove(restId) != null;
+    public boolean deleteMenuByRestIdAndDate(LocalDate localDate, int restId) {
+        if (!mapMenuByDates.containsKey(localDate)) {
+            return false;
+        }
+        return mapMenuByDates.get(localDate).remove(restId) != null;
     }
 
-    public List<Menu> saveMenu(List<Menu> menuList,int restId){
-        mapMenus.put(restId,menuList);
-        List<Menu> result = mapMenus.get(restId);
+    public List<Menu> saveMenu(LocalDate localDate, int restId, List<Menu> menuList) {
+
+        if (!mapMenuByDates.containsKey(localDate)) {
+            Map<Integer, List<Menu>> map = new HashMap<>();
+            mapMenuByDates.put(localDate, map);
+        }
+
+        mapMenuByDates.get(localDate).put(restId, menuList);
+        List<Menu> result = mapMenuByDates.get(localDate).get(restId);
         return result;
+    }
+
+    public Set<Vote> findVotesOnDate(LocalDate localDate) { //discuss it
+        return mapVotes.get(localDate);
+    }
+
+    public boolean saveVoteSpecial(Vote vote) {
+        return mapVotes.get(LocalDate.of(2022, 11, 1)).add(vote); //#1
+    }
+
+    public boolean deleteVoteSpecial(Vote vote) {
+        Set<Vote> votes = mapVotes.get(LocalDate.of(2022, 11, 1)); //#1
+        return votes.remove(vote);
+    }
+
+    public Vote findVote(int userId) { //test it
+        LocalDate today = LocalDate.of(2022, 11, 01); //#1
+        Set<Vote> todayVotes = mapVotes.get(today);
+        Vote usersVoteToday = null;
+        for (Vote item : todayVotes) {
+            if (item.getUserId() == userId) {
+                usersVoteToday = item;
+            }
+        }
+        return usersVoteToday;
     }
 
 }

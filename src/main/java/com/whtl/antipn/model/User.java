@@ -3,6 +3,7 @@ package com.whtl.antipn.model;
 import lombok.Data;
 
 import java.util.List;
+
 @Data
 public class User {
     private Integer id;

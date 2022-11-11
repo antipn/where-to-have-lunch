@@ -5,7 +5,7 @@ import lombok.Data;
 public class RestaurantScoreDto {
     private Integer id;
     private String name;
-    private Integer score; //calculated field how to link it ?
+    private Integer score; // discuss calculated field how to link it ?
 
     public RestaurantScoreDto(Integer id, String name, Integer score) {
         this.id = id;
