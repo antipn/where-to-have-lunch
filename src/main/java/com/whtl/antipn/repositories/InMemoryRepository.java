@@ -5,6 +5,7 @@ import com.whtl.antipn.model.*;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Repository
@@ -134,7 +135,7 @@ public class InMemoryRepository {
     public Map<Integer, Integer> findAllRestaurantsScoreOnToday(LocalDate localDate) {
         Set<Vote> votesOnToday = mapVotes.get(localDate); //votes not found -> exception
         if (votesOnToday == null) {
-            throw new EntityNotFoundException("Rating", 0, "There is no rating on date = " + localDate);
+            throw new EntityNotFoundException("Rating", 0, "There is no rating on date = " + localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
         }
         List<Integer> onlyVotesByRestId = new ArrayList<>();
         //receives only votes on today which ones are just List of restId
@@ -183,17 +184,27 @@ public class InMemoryRepository {
     }
 
     public boolean saveVoteSpecial(Vote vote) {
+        if (!mapVotes.containsKey(LocalDate.now())) {
+            HashSet<Vote> set = new HashSet<>();
+            mapVotes.put(LocalDate.now(), set);
+        }
         return mapVotes.get(LocalDate.now()).add(vote);
     }
 
     public boolean deleteVoteSpecial(Vote vote) {
-        Set<Vote> votes = mapVotes.get(LocalDate.now());
-        return votes.remove(vote);
+        if (mapVotes.get(LocalDate.now()) == null) {
+            return false;
+        }
+        return mapVotes.get(LocalDate.now()).remove(vote);
     }
 
-    public Vote findVote(int userId) { //test it
+    public Vote findVote(int userId) {
         LocalDate today = LocalDate.now();
         Set<Vote> todayVotes = mapVotes.get(today);
+        if (todayVotes == null) {
+            return null;
+            //throw new EntityNotFoundException("VoteDto", userId, "There is no vote for user"); //спорное решение
+        }
         Vote usersVoteToday = null;
         for (Vote item : todayVotes) {
             if (item.getUserId() == userId) {

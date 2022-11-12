@@ -29,23 +29,20 @@ public class VotingController {
     }
 
     //vote
-@Operation(
-        summary = "The providing possibility for user to vote for some restaurant",
-        description="It allows user to vote for restaurant until 11 o'clock"
-)
+    @Operation(
+            summary = "The providing possibility for user to vote for some restaurant",
+            description = "It allows user to vote for restaurant until 11 o'clock"
+    )
+
     @PostMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> createVote(@RequestBody @Parameter(description = "The vote for restaurant by json",required = true) VoteDtoIncome voteDtoIncome) {
+    public ResponseEntity<VoteDto> createVote(@RequestParam @Parameter(description = "The vote for restaurant by sending restId", required = true) int vote) {
         int userId = 1;// please get userId after applying spring security
-        VoteDto voteDto = votingService.saveVote(userId, voteDtoIncome);
-        if (voteDto != null && voteDtoIncome.getRestaurantId() == voteDto.getRestaurantId()) {
-            return ResponseEntity.ok(voteDto);
-        } else {
-            throw new VoteIsNotAllowedException(userId, "The vote can not be processed due to time for voting is over");
-        }
+        return ResponseEntity.ok(votingService.saveVote(userId, vote));
     }
+
     @Operation(
             summary = "The providing possibility getting to know what for restaurant voted user",
-            description="It allows user to get to know his vote"
+            description = "It allows user to get to know his vote"
     )
     @GetMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> readVote() {
@@ -55,21 +52,17 @@ public class VotingController {
 
     @Operation(
             summary = "The providing possibility update his vote",
-            description="It allows user to update his vote until 11 o'clock"
+            description = "It allows user to update his vote until 11 o'clock"
     )
     @PutMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> updateVote(@RequestBody @Parameter(description = "The vote for the restaurant", required = true) VoteDtoIncome voteDtoIncome) {
+    public ResponseEntity<VoteDto> updateVote(@RequestParam @Parameter(description = "The vote for the restaurant", required = true) int restId) {
         int userId = 1;// please get userId after applying spring security
-        VoteDto voteDto = votingService.updateVote(userId, voteDtoIncome);
-        if (voteDto != null) {
-            return ResponseEntity.ok(voteDto);
-        } else {
-            throw new VoteIsNotAllowedException(userId, "The vote can not  be processed due to time for voting is over");
-        }
+        return ResponseEntity.ok(votingService.updateVote(userId, restId));
     }
+
     @Operation(
             summary = "The providing possibility delete his vote",
-            description="It allows user to delete his vote until 11 o'clock"
+            description = "It allows user to delete his vote until 11 o'clock"
     )
     @DeleteMapping("/api/v1/vote")
     public ResponseEntity<Void> deleteVote() {

@@ -1,17 +1,21 @@
 package com.whtl.antipn.services;
 
+import com.whtl.antipn.exception.EntityNotFoundException;
+import com.whtl.antipn.exception.EntityNotFoundResponse;
 import com.whtl.antipn.mapper.RestaurantScoreMapper;
 import com.whtl.antipn.dto.MenuDto;
 import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.dto.RestaurantDto;
 import com.whtl.antipn.mapper.MenuMapper;
 import com.whtl.antipn.mapper.RestaurantMapper;
+import com.whtl.antipn.model.Menu;
 import com.whtl.antipn.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.whtl.antipn.repositories.InMemoryRepository;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -32,14 +36,34 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
 
     public List<RestaurantDto> findAllRestaurants() {
         List<Restaurant> restaurants = repository.findAllRestaurants();
+        if (restaurants == null) {
+            throw new EntityNotFoundException("RestaurantDto", 0, "There are not restaurants");
+        }
         return restaurantMapper.toDtoList(restaurants);
     }
 
     public RestaurantDto findRestaurantById(int restId) {
-        return restaurantMapper.toDto(repository.findRestaurantById(restId));
+        Restaurant restaurantById = repository.findRestaurantById(restId);
+        if (restaurantById == null) {
+            throw new EntityNotFoundException("RestaurantDto", 0, "There is no restaurant with id = " + restId);
+        }
+        return restaurantMapper.toDto(restaurantById);
     }
 
-    public RestaurantDto createRestaurant(RestaurantDto restaurantDto) { //discus this
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto) {//just dto, or dto without restId
+        Restaurant entity = restaurantMapper.toEntity(restaurantDto);
+        if (entity.getId() == null) {
+            entity.setId(repository.findAllRestaurants().size() + 1);
+            //пометка в лог что ресторан пришел без id поэтому добавили автоматически следующий номер в базе!
+        }
+        //do we need check possibility that rest id alredy in DB ?
+        return restaurantMapper.toDto(repository.saveRestaurant(entity));
+    }
+
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto, int restId) {
+        if (restaurantDto.getId() != restId) {
+            restaurantDto.setId(restId);
+        }
         Restaurant entity = restaurantMapper.toEntity(restaurantDto);
         repository.saveRestaurant(entity);
         return restaurantMapper.toDto(repository.saveRestaurant(entity));
@@ -50,11 +74,14 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
     }
 
     public List<RestaurantScoreDto> findRestaurantsScores() {
-        LocalDate localDate = LocalDate.now(); //#1
+        LocalDate localDate = LocalDate.now();
         return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
     }
 
     public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate) {
+        if (localDate == null) {
+            localDate = LocalDate.now();
+        }
         return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
     }
 
@@ -62,8 +89,15 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
         return menuMapper.toDtoList(repository.findMenuByRestId(restId));
     }
 
-    public List<MenuDto> findMenuOnDate(LocalDate localDate, int restId) {
-        return menuMapper.toDtoList(repository.findMenuByRestIdAndDate(localDate, restId));
+    public List<MenuDto> findMenuOnDate(LocalDate localDate, int restId) {// do i need checking rest id ???
+        if (localDate == null) {
+            localDate = LocalDate.now();
+        }
+        List<Menu> menuByRestIdAndDate = repository.findMenuByRestIdAndDate(localDate, restId);
+        if (menuByRestIdAndDate == null) {
+            throw new EntityNotFoundException("MenuDto", 0, "There is no menu for restaurant with id = " + restId + " on date " + localDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy")));
+        }
+        return menuMapper.toDtoList(menuByRestIdAndDate);
     }
 
     public List<MenuDto> saveMenu(LocalDate localDate, int restId, List<MenuDto> menuInput) {
@@ -72,10 +106,16 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
 
     @Override
     public List<MenuDto> updateMenu(LocalDate localDate, int restId, List<MenuDto> menuDtoList) {
+        if (localDate == null) {
+            localDate = LocalDate.now();
+        }
         return saveMenu(localDate, restId, menuDtoList);
     }
 
     public void deleteMenu(LocalDate localDate, int restId) {
+        if (localDate == null) {
+            localDate = LocalDate.now();
+        }
         repository.deleteMenuByRestIdAndDate(localDate, restId); //ValidationUtil.checkNotFoundWithId(
     }
     //после перехода на jpa это пригодится

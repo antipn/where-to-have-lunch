@@ -13,7 +13,7 @@ public interface RestaurantAndMenuService {
 
     public RestaurantDto findRestaurantById(int restId);
 
-    public RestaurantDto createRestaurant(RestaurantDto restaurantDto);
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto, int restId);
 
     public void deleteRestaurant(int restId);
 
