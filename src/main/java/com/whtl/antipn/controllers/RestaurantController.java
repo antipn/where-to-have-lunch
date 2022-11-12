@@ -6,6 +6,7 @@ import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.dto.RestaurantDto;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.services.RestaurantAndMenuServiceImpl;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@Tag(name = "Restaurants and menus controller", description = "The responsibilities of controller are: creating, updating and deleting information about restaurants and theirs menus. ")
 @RestController
 public class RestaurantController {
 

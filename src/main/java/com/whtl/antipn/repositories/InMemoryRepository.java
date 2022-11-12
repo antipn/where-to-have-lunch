@@ -183,16 +183,16 @@ public class InMemoryRepository {
     }
 
     public boolean saveVoteSpecial(Vote vote) {
-        return mapVotes.get(LocalDate.of(2022, 11, 1)).add(vote); //#1
+        return mapVotes.get(LocalDate.now()).add(vote);
     }
 
     public boolean deleteVoteSpecial(Vote vote) {
-        Set<Vote> votes = mapVotes.get(LocalDate.of(2022, 11, 1)); //#1
+        Set<Vote> votes = mapVotes.get(LocalDate.now());
         return votes.remove(vote);
     }
 
     public Vote findVote(int userId) { //test it
-        LocalDate today = LocalDate.of(2022, 11, 01); //#1
+        LocalDate today = LocalDate.now();
         Set<Vote> todayVotes = mapVotes.get(today);
         Vote usersVoteToday = null;
         for (Vote item : todayVotes) {
