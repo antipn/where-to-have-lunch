@@ -1,7 +1,6 @@
 package com.whtl.antipn.services;
 
 import com.whtl.antipn.dto.VoteDto;
-import com.whtl.antipn.dto.input.VoteDtoIncome;
 
 public interface VotingService {
     public VoteDto findVote(int userId);

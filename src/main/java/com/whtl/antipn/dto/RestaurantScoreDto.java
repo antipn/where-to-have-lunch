@@ -1,10 +1,14 @@
 package com.whtl.antipn.dto;
 
-import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
+@Schema(description = "Entity for showing rating")
 public class RestaurantScoreDto {
+    @Schema(description = "Restaurant id", example = "11")
     private Integer id;
+    @Schema(description = "Restaurant name", example = "Grand cuisine")
     private String name;
+    @Schema(description = "Restaurant score by users choosing on rating date", example = "92")
     private Integer score; // discuss calculated field how to link it ?
 
     public RestaurantScoreDto(Integer id, String name, Integer score) {

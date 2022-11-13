@@ -52,9 +52,9 @@ public class InMemoryRepository {
 
         //users
 
-        User admin = new User(0, Arrays.asList(adminRole));
-        User user1 = new User(1, Arrays.asList(userRole));
-        User user2 = new User(2, Arrays.asList(userRole));
+        User admin = new User(0, "admin@email.ru", "password", true, Arrays.asList(adminRole));
+        User user1 = new User(1, "user1@3mail.ru", "password", true, Arrays.asList(userRole));
+        User user2 = new User(2, "user2@email.ru", "passwords", true, Arrays.asList(userRole));
 
         mapUsers.put(0, admin);
         mapUsers.put(1, user1);
@@ -112,17 +112,17 @@ public class InMemoryRepository {
     }
 
     public Restaurant findRestaurantById(int id) {
-        //System.out.println("Нашли ресторан в базе");
+        showMaps();
         return mapRestaurants.get(id);
     }
 
     public Restaurant saveRestaurant(Restaurant restaurant) {
-        int id = mapRestaurants.size() + 1;
         if (restaurant.getId() == null) {
+            int id = mapRestaurants.size() + 1;
             restaurant.setId(id);
         }
-        mapRestaurants.put(id, restaurant);
-        return mapRestaurants.get(id);
+        mapRestaurants.put(restaurant.getId(), restaurant);
+        return mapRestaurants.get(restaurant.getId());
 
     }
 

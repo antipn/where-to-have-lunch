@@ -11,6 +11,6 @@ public class SpringMain {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SpringMain.class, args);
         InMemoryRepository inMemoryRepository = context.getBean(InMemoryRepository.class);
-        inMemoryRepository.showMaps();
+        //inMemoryRepository.showMaps();
     }
 }

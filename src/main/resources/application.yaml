@@ -1,0 +1,18 @@
+spring:
+  datasource:
+#    url: jdbc:h2:file:./src/main/resources/db/H2/where-have-to-lunch;
+    url: jdbc:h2:mem:where-have-to-lunch
+    username: sa
+    password: pass
+    driverClassName: org.h2.Driver
+  h2:
+     console:
+       enabled: true
+       path: /h2
+
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+
+  liquibase:
+    change-log: classpath:/db/changelog/db-changelog-master.yaml
+    enabled: true

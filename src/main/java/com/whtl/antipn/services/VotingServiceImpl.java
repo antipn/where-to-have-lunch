@@ -1,26 +1,22 @@
 package com.whtl.antipn.services;
 
-import com.whtl.antipn.Utils.ValidationUtil;
 import com.whtl.antipn.dto.VoteDto;
-import com.whtl.antipn.dto.input.VoteDtoIncome;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.exception.VoteIsNotAllowedException;
 import com.whtl.antipn.mapper.VoteMapper;
 import com.whtl.antipn.model.Vote;
 import com.whtl.antipn.repositories.InMemoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Set;
 
 @Service
 public class VotingServiceImpl implements VotingService {
 
+    LocalTime acceptanceVoteTime = LocalTime.of(11, 0);
     InMemoryRepository repository;
     VoteMapper voteMapper;
 
@@ -42,12 +38,12 @@ public class VotingServiceImpl implements VotingService {
     public VoteDto saveVote(int userId, int restId) {
         // Vote usersVoteToday = repository.findVote(userId);
         //if ((usersVoteToday == null) || (LocalTime.now().isBefore(LocalTime.of(11, 0)))) {
-        if (LocalTime.now().isBefore(LocalTime.of(11, 0))) {
+        if (LocalTime.now().isBefore(acceptanceVoteTime)
+                || (repository.findVote(userId) == null)) {
             repository.deleteVoteSpecial(repository.findVote(userId)); //used for updating the vote
             repository.saveVoteSpecial(new Vote(userId, restId));
         } else {
-            throw new VoteIsNotAllowedException(userId, "The time for voting is over " + java.time.Duration.between(LocalTime.of(11, 0),
-                    LocalDate.now()));
+            throw new VoteIsNotAllowedException(userId, "The time for voting is over");
         }
         return voteMapper.toDto(repository.findVote(userId));
     }
@@ -58,11 +54,16 @@ public class VotingServiceImpl implements VotingService {
     }
 
     public void deleteVote(int userId) {
-        if (LocalTime.now().isBefore(LocalTime.of(11, 0))) {
-            repository.deleteVoteSpecial(repository.findVote(userId)); //discuss deleting and checkNotFoundWithId //ValidationUtil.checkNotFoundWithId(
+        Vote vote = repository.findVote(userId);
+
+        if (LocalTime.now().isBefore(acceptanceVoteTime)) {
+            if (vote != null) {
+                repository.deleteVoteSpecial(repository.findVote(userId)); //discuss deleting and checkNotFoundWithId //ValidationUtil.checkNotFoundWithId(
+            } else {
+                throw new EntityNotFoundException("VoteDto", 0, "There is no vote for user with id " + userId);
+            }
         } else {
-            throw new VoteIsNotAllowedException(userId, "The time for voting is over" + java.time.Duration.between(LocalTime.of(11, 0),
-                    LocalDate.now()));
+            throw new VoteIsNotAllowedException(userId, "The time for voting is over");
         }
     }
 }

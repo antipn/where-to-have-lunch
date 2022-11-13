@@ -65,17 +65,19 @@ public class RestaurantAndMenuServiceImpl implements RestaurantAndMenuService {
             restaurantDto.setId(restId);
         }
         Restaurant entity = restaurantMapper.toEntity(restaurantDto);
-        repository.saveRestaurant(entity);
         return restaurantMapper.toDto(repository.saveRestaurant(entity));
     }
 
     public void deleteRestaurant(int restId) {
-        repository.deleteRestaurant(restId); //ValidationUtil.checkNotFoundWithId(
+        if (!repository.deleteRestaurant(restId)) {
+            throw new EntityNotFoundException("RestaurantDto", restId, "There is no restaurant with id = " + restId);
+        } else {
+            //do we need provide more info for user after deleting ?
+        }
     }
 
     public List<RestaurantScoreDto> findRestaurantsScores() {
-        LocalDate localDate = LocalDate.now();
-        return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(localDate));
+        return restaurantScoreMapper.toDto(repository.findAllRestaurantsScoreOnToday(LocalDate.now()));
     }
 
     public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate) {

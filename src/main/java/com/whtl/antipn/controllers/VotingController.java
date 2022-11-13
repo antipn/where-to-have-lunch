@@ -2,7 +2,6 @@ package com.whtl.antipn.controllers;
 
 import com.whtl.antipn.dto.VoteDto;
 import com.whtl.antipn.exception.VoteIsNotAllowedResponse;
-import com.whtl.antipn.dto.input.VoteDtoIncome;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.exception.VoteIsNotAllowedException;
 import com.whtl.antipn.services.VotingServiceImpl;
@@ -35,7 +34,9 @@ public class VotingController {
     )
 
     @PostMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> createVote(@RequestParam @Parameter(description = "The vote for restaurant by sending restId", required = true) int vote) {
+    public ResponseEntity<VoteDto> createVote(@RequestParam
+                                              @Parameter(description = "The vote for restaurant by sending restId", required = true)
+                                              int vote) {
         int userId = 1;// please get userId after applying spring security
         return ResponseEntity.ok(votingService.saveVote(userId, vote));
     }
