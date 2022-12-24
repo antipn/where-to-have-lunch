@@ -13,13 +13,16 @@ public class RestaurantDto {
     @Schema(description = "Restaurant address", example = "Spb, Nevsky avenue house 100")
     private String address;
     @Schema(description = "Open/closed status of restaurant for visiting", example = "true or false")
-    private boolean status;
+    private boolean open;
 
-    public RestaurantDto(Integer restId, String restName, String restAddress, boolean restOpen) {
-        this.id = restId;
-        this.name = restName;
-        this.address = restAddress;
-        this.status = restOpen;
+    public RestaurantDto() {
+    }
+
+    public RestaurantDto(Integer id, String name, String address, boolean open) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.open = open;
     }
 
     public Integer getId() {
@@ -46,11 +49,13 @@ public class RestaurantDto {
         this.address = address;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isOpen() {
+        return open;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 }
+
+

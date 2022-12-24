@@ -5,7 +5,10 @@ import com.whtl.antipn.dto.MenuDto;
 import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.dto.RestaurantDto;
 import com.whtl.antipn.exception.EntityNotFoundException;
-import com.whtl.antipn.services.RestaurantAndMenuServiceImpl;
+//import com.whtl.antipn.services.RestaurantAndMenuServiceImpl;
+import com.whtl.antipn.repositories.RestaurantRepository;
+import com.whtl.antipn.services.RestaurantAndMenuService;
+import com.whtl.antipn.services.RestaurantsAndMenuServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,10 +26,12 @@ import java.util.List;
 @RestController
 public class RestaurantController {
 
-    private final RestaurantAndMenuServiceImpl restaurantService;
+    //private final RestaurantAndMenuServiceImpl restaurantService;
+
+    RestaurantsAndMenuServiceImpl restaurantService;
 
     @Autowired
-    public RestaurantController(RestaurantAndMenuServiceImpl restaurantService) {
+    public RestaurantController(RestaurantsAndMenuServiceImpl restaurantService) {
         this.restaurantService = restaurantService;
     }
 
@@ -35,7 +40,7 @@ public class RestaurantController {
             summary = "The providing possibility for administrators to save new restaurant",
             description = "It allows for administrators to save restaurant at any time"
     )
-    
+
     @PostMapping("/api/v1/restaurants")
 
     //now we from this method we will use restId from restaurantDto

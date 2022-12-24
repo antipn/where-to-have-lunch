@@ -1,17 +1,22 @@
 package com.whtl.antipn.controllers;
 
+import com.whtl.antipn.AuthorizedUser;
 import com.whtl.antipn.dto.VoteDto;
 import com.whtl.antipn.exception.VoteIsNotAllowedResponse;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.exception.VoteIsNotAllowedException;
-import com.whtl.antipn.services.VotingServiceImpl;
+import com.whtl.antipn.services.VotingService;
 import com.whtl.antipn.exception.EntityNotFoundResponse;
+import com.whtl.antipn.services.VotingServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Vote controller", description = "The responsibilities of Vote controller are providing voting API: " +
@@ -33,11 +38,18 @@ public class VotingController {
             description = "It allows user to vote for restaurant until 11 o'clock"
     )
 
+
     @PostMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> createVote(@RequestParam
                                               @Parameter(description = "The vote for restaurant by sending restId", required = true)
-                                              int vote) {
-        int userId = 1;// please get userId after applying spring security
+                                              int vote,@AuthenticationPrincipal AuthorizedUser authUser) {
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        Authentication authentication = ...
+//        CustomUser customUser = (CustomUser)authentication.getPrincipal();
+//        int userId = customUser.getUserId();
+
+
+        int userId =1001;//auth.getName() ;// please get userId after applying spring security
         return ResponseEntity.ok(votingService.saveVote(userId, vote));
     }
 
@@ -47,7 +59,7 @@ public class VotingController {
     )
     @GetMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> readVote() {
-        int userId = 1;// // please get userId after applying spring security
+        int userId = 1001;// // please get userId after applying spring security
         return ResponseEntity.ok(votingService.findVote(userId));
     }
 
@@ -57,7 +69,7 @@ public class VotingController {
     )
     @PutMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> updateVote(@RequestParam @Parameter(description = "The vote for the restaurant", required = true) int restId) {
-        int userId = 1;// please get userId after applying spring security
+        int userId = 1001;// please get userId after applying spring security
         return ResponseEntity.ok(votingService.updateVote(userId, restId));
     }
 

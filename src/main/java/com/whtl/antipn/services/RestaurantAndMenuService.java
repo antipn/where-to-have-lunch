@@ -14,6 +14,7 @@ public interface RestaurantAndMenuService {
     public RestaurantDto findRestaurantById(int restId);
 
     public RestaurantDto createRestaurant(RestaurantDto restaurantDto, int restId);
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto);
 
     public void deleteRestaurant(int restId);
 

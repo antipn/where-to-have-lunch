@@ -6,120 +6,133 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="1_add_roles" author="antipn">
-        <createTable tableName="roles">
-            <column name="id" type="int">
+    <property name="now" value="now()" dbms="mysql,h2"/>
+
+    <changeSet id="1 adding table -> users" author="antipn">
+        <createSequence cacheSize="371717"
+                        catalogName="h2"
+                        cycle="false"
+                        dataType="int"
+                        incrementBy="1"
+                        maxValue="1000000"
+                        minValue="1000"
+                        ordered="true"
+                        schemaName="public"
+                        sequenceName="hibernate_sequence_global"
+                        startValue="1000"/>
+
+        <createTable tableName="users">
+            <column name="id" type="int" defaultValue="nextval('hibernate_sequence_global')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(20)"/>
-            <column name="description" type="varchar(50)"/>
+            <column name="email" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="registered" type="TIMESTAMP" defaultValue="now()">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <!-- проверка на уникаольность помимо первичного ключа-->
-        <addUniqueConstraint tableName="roles" columnNames="id,name"/>
+
+        <addUniqueConstraint tableName="users" columnNames="email"/>
 
         <sql>
-            CREATE SEQUENCE hibernate_sequence_role
-                minvalue 1
-                start with 100
-                increment by 1 cache 1;
-
-            INSERT INTO roles(id, name, description)
-            VALUES (nextval('hibernate_sequence_role'), 'Administrator', 'Role for administrating app and users');
-
-            INSERT INTO roles(id, name, description)
-            VALUES (nextval('hibernate_sequence_role'), 'User', 'Role for using application');
+            INSERT INTO users (email, password)
+--             default password us password
+            VALUES ( 'admin@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
+                   ( 'user@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
+                   ( 'palmer@bk.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2');
         </sql>
 
     </changeSet>
 
-    <changeSet id="2_add_users" author="antipn">
-        <createTable tableName="users">
-            <column name="id" type="int">
+    <changeSet id="2 adding table -> roles" author="antipn">
+        <createTable tableName="roles">
+            <column name="user_id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="email" type="varchar(30)"/>
-            <column name="password" type="varchar(30)"/>
-            <column name="status" type="boolean"/>
-            <column name="registered" type="TIMESTAMP"/>
-            <column name="role_id" type="int"/>
+            <column name="role" type="varchar">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
+        <addUniqueConstraint tableName="roles" columnNames="user_id,role"/>
 
-        <!-- проверка на уникаольность помимо первичного ключа-->
-        <addUniqueConstraint tableName="users" columnNames="email"/>
-
-        <addForeignKeyConstraint baseTableName="users" baseColumnNames="role_id"
-                                 constraintName="users_roles_id_fk"
-                                 referencedTableName="roles"
+        <addForeignKeyConstraint baseTableName="roles" baseColumnNames="user_id"
+                                 constraintName="roles_users_id"
+                                 referencedTableName="users"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
-                                 onUpdate="CASCADE"/>
+        />
         <sql>
-            CREATE SEQUENCE hibernate_sequence_users
-                minvalue 1
-                start with 200
-                increment by 1 cache 1;
-
-            INSERT INTO users (id, email, password, status, registered, role_id)
-            VALUES (nextval('hibernate_sequence_users'), 'admin@email.ru', 'password', true, now(), 100);
-
-            INSERT INTO users (id, email, password, status, registered, role_id)
-            VALUES (nextval('hibernate_sequence_users'), 'user1@email.ru', 'password', true, now(), 101);
-
-            INSERT INTO users (id, email, password, status, registered, role_id)
-            VALUES (nextval('hibernate_sequence_users'), 'user2@email.ru', 'password', true, now(), 101);
-
-
---             REINDEX INDEX  tickets_pkey;
+            INSERT INTO roles(user_id, role)
+            VALUES (1000, 'ADMIN'),
+                   (1001, 'USER'),
+                   (1002, 'USER');
         </sql>
 
     </changeSet>
 
     <changeSet id="3_add_restaurants" author="antipn">
         <createTable tableName="restaurants">
-            <column name="id" type="int">
+            <column name="id" type="int" defaultValue="nextval('hibernate_sequence_global')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(30)"/>
-            <column name="address" type="varchar(60)"/>
-            <column name="status" type="boolean"/>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="open" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
+        <addUniqueConstraint tableName="restaurants" columnNames="name,address"/>
 
         <sql>
-            CREATE SEQUENCE hibernate_sequence_restaurants
-                minvalue 1
-                start with 300
-                increment by 1 cache 1;
 
-            INSERT INTO restaurants (id, name, address, status)
-            VALUES (nextval('hibernate_sequence_restaurants'), 'Bekitzer',
-                    'Saint-Petersburg, Rubinshteina street 40/11', true);
 
-            INSERT INTO restaurants (id, name, address, status)
-            VALUES (nextval('hibernate_sequence_restaurants'), 'Grand cuisine',
-                    'Saint-Petersburg, Nevsky avenue house 100', true);
+            INSERT INTO restaurants (name, address)
+            VALUES ('Bekitzer', 'Saint-Petersburg, Rubinshteina street 40/11'),
+                   ('Grand cuisine', 'Saint-Petersburg, Nevsky avenue house 100'),
+                   ('Mariott Grand Hotel', 'Moscow, Tveskaya street house 26/1');
 
-            INSERT INTO restaurants (id, name, address, status)
-            VALUES (nextval('hibernate_sequence_restaurants'), 'Mariott Grand Hotel',
-                    'Moscow, Tveskaya street house 26/1', true);
-
-            --             REINDEX INDEX  tickets_pkey;
         </sql>
     </changeSet>
 
-    <changeSet id="4_add_menus" author="antipn">
+
+    <changeSet id="4_add_table -> menus" author="antipn">
+
         <createTable tableName="menus">
-            <column name="id" type="int">
+
+            <column name="id" type="int" defaultValue="nextval('hibernate_sequence_global')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="date" type="date"/>
-            <column name="restaurant_id" type="int"/>
-            <column name="name" type="varchar(30)"/>
-            <column name="price" type="double"/>
+
+            <!--see top for variable that allows save date in SQL-->
+            <column name="date" type="date" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="restaurant" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="double">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <!-- проверка на уникаольность помимо первичного ключа-->
-        <addUniqueConstraint tableName="menus" columnNames="date,restaurant_id,name,price "/>
+        <addUniqueConstraint tableName="menus" columnNames="date,restaurant,name,price"/>
 
-        <addForeignKeyConstraint baseTableName="menus" baseColumnNames="restaurant_id"
+        <addForeignKeyConstraint baseTableName="menus" baseColumnNames="restaurant"
                                  constraintName="menus_restaurant_id"
                                  referencedTableName="restaurants"
                                  referencedColumnNames="id"
@@ -127,53 +140,45 @@
                                  onUpdate="CASCADE"/>
         <sql>
 
-            CREATE SEQUENCE hibernate_sequence_menus
-                minvalue 1
-                start with 400
-                increment by 1 cache 1;
---rest300
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 300, 'Breakfast', 1000.1);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 300, 'Lunch', 2000.2);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 300, 'Dinner', 3000.3);
---rest301
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 301, 'Breakfast', 2000.1);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 301, 'Lunch', 3000.2);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 301, 'Dinner', 4000.3);
---rest302
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 302, 'Breakfast', 3000.1);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 302, 'Lunch', 4000.2);
-            INSERT INTO menus (id, date, restaurant_id, name, price)
-            VALUES (nextval('hibernate_sequence_menus'), '2022-11-13', 302, 'Dinner', 5000.3);
+            INSERT INTO menus (restaurant, name, price)
+            VALUES (1003, 'Breakfast', 1000.1),
+                   (1003, 'Lunch', 2000.2),
+                   (1003, 'Dinner', 3000.3),
+                   (1004, 'Breakfast', 2000.1),
+                   (1004, 'Lunch', 3000.2),
+                   (1004, 'Dinner', 4000.3),
+                   (1005, 'Breakfast', 3000.1),
+                   (1005, 'Lunch', 4000.2),
+                   (1005, 'Dinner', 5000.3);
 
-
-            --             REINDEX INDEX  tickets_pkey;
         </sql>
     </changeSet>
-    <changeSet id="5_add_votes" author="antipn">
+
+    <changeSet id="5_add_table -> votes" author="antipn">
         <createTable tableName="votes">
-            <column name="id" type="int">
+            <column name="id" type="int" defaultValue="nextval('hibernate_sequence_global')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="date" type="date"/>
-            <column name="user_id" type="int"/>
-            <column name="restaurant_id" type="int"/>
+            <!--see top for variable that allows save date in SQL-->
+            <column name="date" type="date" defaultValueDate="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="restaurant_id" type="int">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-        <!-- проверка на уникаольность помимо первичного ключа-->
         <addUniqueConstraint tableName="votes" columnNames="date,user_id"/>
+
         <addForeignKeyConstraint baseTableName="votes" baseColumnNames="user_id"
                                  constraintName="votes_user_id"
                                  referencedTableName="users"
                                  referencedColumnNames="id"
                                  onDelete="CASCADE"
                                  onUpdate="CASCADE"/>
+
         <addForeignKeyConstraint baseTableName="votes" baseColumnNames="restaurant_id"
                                  constraintName="votes_restaurant_id"
                                  referencedTableName="restaurants"
@@ -183,54 +188,27 @@
 
 
         <sql>
-            CREATE SEQUENCE hibernate_sequence_votes
-                minvalue 1
-                start with 500
-                increment by 1 cache 1;
-
---user 201 (restaurants 300.301.302)
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-01', 201, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-02', 201, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-03', 201, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-04', 201, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-05', 201, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-06', 201, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-07', 201, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-08', 201, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-09', 201, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-10', 201, 300);
-
---user 202 (restaurants 300.301.302)
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-01', 202, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-02', 202, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-03', 202, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-04', 202, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-05', 202, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-06', 202, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-07', 202, 301);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-08', 202, 302);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-09', 202, 300);
-            INSERT INTO votes(id, date, user_id, restaurant_id)
-            VALUES (nextval('hibernate_sequence_votes'), '2022-11-10', 202, 301);
+            INSERT INTO votes(date, user_id, restaurant_id)
+            VALUES ('2022-11-01', 1001, 1003),
+                   ('2022-11-02', 1001, 1004),
+                   ('2022-11-03', 1001, 1005),
+                   ('2022-11-04', 1001, 1003),
+                   ('2022-11-05', 1001, 1004),
+                   ('2022-11-06', 1001, 1005),
+                   ('2022-11-07', 1001, 1003),
+                   ('2022-11-08', 1001, 1004),
+                   ('2022-11-09', 1001, 1005),
+                   ('2022-11-10', 1001, 1003),
+                   ('2022-11-01', 1002, 1004),
+                   ('2022-11-02', 1002, 1005),
+                   ('2022-11-03', 1002, 1003),
+                   ('2022-11-04', 1002, 1004),
+                   ('2022-11-05', 1002, 1005),
+                   ('2022-11-06', 1002, 1003),
+                   ('2022-11-07', 1002, 1004),
+                   ('2022-11-08', 1002, 1005),
+                   ('2022-11-09', 1002, 1003),
+                   ('2022-11-10', 1002, 1004);
 
 
         </sql>

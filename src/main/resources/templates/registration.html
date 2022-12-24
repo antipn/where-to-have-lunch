@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+
+<body>
+
+<form method="post" th:action="@{/registration}" th:object="${userDto}">
+    <main class="main">
+        <div class="input-container">
+            <label for="email">
+                <span class="label-text">E-mail</span>
+            </label>
+            <input
+                    type="email"
+                    th:field="*{email}"
+                    id="email"
+                    placeholder="введите e-mail"
+            />
+            <div
+                    class="error"
+                    style="color:red"
+                    th:if="${#fields.hasErrors('email')}"
+                    th:errors="*{email}"> email error
+            </div>
+        </div>
+
+
+        <div class="input-container">
+            <label for="password">
+                <span class="label-text">Пароль</span>
+            </label>
+            <input
+                    type="password"
+                    th:field="*{password}"
+                    id="password"
+                    placeholder="введите пароль"
+            />
+            <div
+                    class="error"
+                    style="color:red"
+                    th:if="${#fields.hasErrors('password')}"
+                    th:errors="*{password}"> password error
+            </div>
+        </div>
+
+        <div class="input-container">
+            <label for="password2">
+                <span class="label-text">Повторите пароль</span>
+            </label>
+            <input
+                    type="password"
+                    th:field="*{confirmPassword}"
+                    id="password2"
+                    placeholder="введите пароль еще раз"
+            />
+            <div
+                    class="error"
+                    style="color:red"
+                    th:if="${#fields.hasErrors('confirmPassword')}"
+                    th:errors="*{confirmPassword}"> repeated passwordError
+            </div>
+        </div>
+
+        <button class="btn btn-submit" type="submit">
+            Зарегистрироваться
+        </button>
+
+    </main>
+</form>
+
+</body>
+</html>

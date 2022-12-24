@@ -1,18 +1,37 @@
 package com.whtl.antipn.model;
 
-import lombok.Data;
+import lombok.*;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
+@Entity
+@Table(name = "restaurants")
 @Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Restaurant {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
+    @SequenceGenerator(name = "global_seq", sequenceName = "hibernate_sequence_global", allocationSize = 1)
+    @Column(name = "id", nullable = false)
     private Integer id;
-    private String name;
-    private String address;
-    private boolean status;
 
-    public Restaurant(Integer id, String name, String address, boolean status) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.status = status;
-    }
+    @Column(name = "name", nullable = false)
+    @Size(max = 128)
+    @NotBlank
+    private String name;
+
+    @Column(name = "address", nullable = false)
+    @NotBlank
+    @Size(max = 128)
+    private String address;
+
+    @Column(name = "open", nullable = false)
+    @NotBlank
+    private boolean open = true;
+
 }

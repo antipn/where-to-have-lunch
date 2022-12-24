@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Welcome!</title>
+</head>
+<body>
+<main class="main">
+    <div>
+        <h2>Welcome to "Where have to lunch" application:</h2>
+        <h2 th:text="${email}"></h2>
+    </div>
+    <br>
+    Now, if you want, you can logout from your account by this button:
+    <a href="/logout">Logout</a>
+</main>
+</body>
+</html>

@@ -1,17 +1,14 @@
 package com.whtl.antipn.model;
 
-import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
-@Data
-public class Role {
+public enum Role implements GrantedAuthority {
+    USER, ADMIN;
 
-    private Integer id;
-    private String name;
-    private String description;
-
-    public Role(Integer id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
+    //    https://stackoverflow.com/a/19542316/548473
+    @Override
+    public String getAuthority() {
+        return "ROLE_" + name();
     }
 }
+

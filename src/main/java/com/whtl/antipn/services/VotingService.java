@@ -1,7 +1,9 @@
 package com.whtl.antipn.services;
 
 import com.whtl.antipn.dto.VoteDto;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface VotingService {
     public VoteDto findVote(int userId);
 

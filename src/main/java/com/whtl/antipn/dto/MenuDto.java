@@ -5,32 +5,29 @@ import lombok.Data;
 
 @Schema(description = "Entity of menu by dish name and dish price")
 public class MenuDto {
-    @Schema(description = "Name of dish", example = "Salmon fist plate")
-    private String dishName;
-    @Schema(description = "Price for dish", example = "100.5")
-    private Double dishPrice;
 
-    public MenuDto(String dishName, Double dishPrice) {
-        this.dishName = dishName;
-        this.dishPrice = dishPrice;
-    }
+    @Schema(description = "Name of dish", example = "Salmon fist plate")
+    private String name;
+    @Schema(description = "Price for dish", example = "100.5")
+    private Double price;
+
 
     public MenuDto() {
     }
 
-    public String getDishName() {
-        return dishName;
+    public String getName() {
+        return name;
     }
 
-    public void setDishName(String dishName) {
-        this.dishName = dishName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Double getDishPrice() {
-        return dishPrice;
+    public Double getPrice() {
+        return price;
     }
 
-    public void setDishPrice(Double dishPrice) {
-        this.dishPrice = dishPrice;
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

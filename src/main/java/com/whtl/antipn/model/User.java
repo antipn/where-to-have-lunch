@@ -1,25 +1,56 @@
 package com.whtl.antipn.model;
 
-import lombok.Data;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.time.LocalDate;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-@Data
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
+    @SequenceGenerator(name = "global_seq", sequenceName = "hibernate_sequence_global", allocationSize = 1)
+    @Column(name = "id", nullable = false)
     private Integer id;
-    private String email;
-    private String password;
-    private boolean enabled = true;
-    private Date registered = new Date();
-    private List<Role> roles;
 
-    public User(Integer id, String email, String password, boolean enabled, List<Role> roles) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.enabled = enabled;
-        this.roles = roles;
-    }
+
+    @Column(name = "email", nullable = false, unique = true)
+    @Email
+    @NotBlank
+    @Size(max = 128)
+    private String email;
+
+    @Column(name = "password", nullable = false)
+    @NotBlank
+    @Size(min = 8, max = 128)
+    private String password;
+
+    @Column(name = "status", nullable = false, columnDefinition = "boolean, default true")
+    private boolean enabled = true;
+
+    @Column(name = "registered", nullable = false, columnDefinition = "timestamp, default now()", updatable = false)
+    @NotNull
+    private Date registered = new Date();
+
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "roles", joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_roles")})
+    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles;
+
+
 }
