@@ -1,33 +1,34 @@
 package com.whtl.antipn.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.*;
 
+import java.time.LocalDate;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Schema(description = "Entity of menu by dish name and dish price")
 public class MenuDto {
 
+    @Schema(description = "Date of menu's position", example = "2022-12-25")
+    private LocalDate date;
+    @Schema(description = "Restaurant id", example = "1003")
+    private int restaurant;
     @Schema(description = "Name of dish", example = "Salmon fist plate")
     private String name;
     @Schema(description = "Price for dish", example = "100.5")
     private Double price;
 
-
-    public MenuDto() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
+    @Override
+    public String toString() {
+        return "MenuDto{" +
+                "date=" + date +
+                ", restaurant=" + restaurant +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

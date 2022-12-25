@@ -29,10 +29,10 @@ public class Menu {
     @NotBlank
     private LocalDate date;
 
-    @JoinColumn(name = "restaurant", nullable = false)
-    @NotBlank
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Restaurant restaurant;
+//    @JoinColumn(name = "restaurant", nullable = false)
+//    @NotBlank
+//    @ManyToOne(fetch = FetchType.LAZY)
+    private int restaurant;
 
     @Column(name = "name", nullable = false)
     @NotBlank

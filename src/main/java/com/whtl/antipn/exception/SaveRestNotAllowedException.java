@@ -7,9 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VoteIsNotAllowedException extends RuntimeException {
+public class SaveRestNotAllowedException extends RuntimeException {
 
-    private int userId;
     private String message;
 
 }

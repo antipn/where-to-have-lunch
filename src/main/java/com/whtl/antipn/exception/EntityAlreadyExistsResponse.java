@@ -7,9 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VoteIsNotAllowedException extends RuntimeException {
-
-    private int userId;
+public class EntityAlreadyExistsResponse {
+    private int status;
     private String message;
+    private long timestamp;
 
 }

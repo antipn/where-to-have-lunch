@@ -2,25 +2,30 @@ package com.whtl.antipn.controllers;
 
 import com.whtl.antipn.dto.UserDto;
 import com.whtl.antipn.model.User;
+import com.whtl.antipn.security.validation.UserValidator;
 import com.whtl.antipn.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
 public class UserController {
 
     private final UserService userService;
+    private final UserValidator userValidator;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserValidator userValidator) {
         this.userService = userService;
+        this.userValidator = userValidator;
     }
 
     @GetMapping(value = "/login")
@@ -35,26 +40,21 @@ public class UserController {
     }
 
     @GetMapping("/registration")
-    public ModelAndView registrationPage(@ModelAttribute("userDto") UserDto userDto) {
+    public ModelAndView register(@ModelAttribute("userDto") UserDto userDto) {
         return new ModelAndView("registration");
 
     }
 
 
     @PostMapping(value = "/registration")
-    public ModelAndView doRegistration(@ModelAttribute("userDto") UserDto userDto) {
-        String password = userDto.getPassword();
-        String confirmPassword = userDto.getConfirmPassword();
+    public ModelAndView saveRegister(@ModelAttribute("userDto") @Valid UserDto userDto, BindingResult bindingResult) {
+        userValidator.validate(userDto, bindingResult);
 
-        if (password.equals(confirmPassword)) { //if pass1 field == pass2 field
-            try {
-                userService.userRegistration(userDto);
-                return new ModelAndView("login");
-            } catch (RuntimeException e) {
-                return new ModelAndView("registration");
-            }
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("registration");
         }
-        return new ModelAndView("registration");
+        userService.userRegistration(userDto);
+        return new ModelAndView("login");
     }
 
     @GetMapping("/welcome")

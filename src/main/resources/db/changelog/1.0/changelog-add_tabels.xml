@@ -15,11 +15,11 @@
                         dataType="int"
                         incrementBy="1"
                         maxValue="1000000"
-                        minValue="1000"
+                        minValue="999"
                         ordered="true"
                         schemaName="public"
                         sequenceName="hibernate_sequence_global"
-                        startValue="1000"/>
+                        startValue="999"/>
 
         <createTable tableName="users">
             <column name="id" type="int" defaultValue="nextval('hibernate_sequence_global')">
@@ -44,9 +44,10 @@
         <sql>
             INSERT INTO users (email, password)
 --             default password us password
-            VALUES ( 'admin@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
-                   ( 'user@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
-                   ( 'palmer@bk.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2');
+            VALUES ('admin@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
+                   ('user@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
+                   ('palmer@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2'),
+                   ('mealJoy@mail.ru', '$2a$10$6Nuu7IahVVeYoe4IqiRAM.RAd5VHKS2hBj0FybNC3yKoHJr0adDV2');
         </sql>
 
     </changeSet>
@@ -70,7 +71,8 @@
         />
         <sql>
             INSERT INTO roles(user_id, role)
-            VALUES (1000, 'ADMIN'),
+            VALUES (999, 'ADMIN'),
+                   (1000, 'USER'),
                    (1001, 'USER'),
                    (1002, 'USER');
         </sql>
@@ -98,9 +100,9 @@
 
 
             INSERT INTO restaurants (name, address)
-            VALUES ('Bekitzer', 'Saint-Petersburg, Rubinshteina street 40/11'),
+            VALUES ('SuperLunchRestaurant', 'Saint-Petersburg, Rubinshteina street 40/11'),
                    ('Grand cuisine', 'Saint-Petersburg, Nevsky avenue house 100'),
-                   ('Mariott Grand Hotel', 'Moscow, Tveskaya street house 26/1');
+                   ('Mariott Grand Restaurant', 'Petersburg, Tveskaya street house 26/1');
 
         </sql>
     </changeSet>
@@ -189,27 +191,36 @@
 
         <sql>
             INSERT INTO votes(date, user_id, restaurant_id)
-            VALUES ('2022-11-01', 1001, 1003),
-                   ('2022-11-02', 1001, 1004),
-                   ('2022-11-03', 1001, 1005),
-                   ('2022-11-04', 1001, 1003),
-                   ('2022-11-05', 1001, 1004),
-                   ('2022-11-06', 1001, 1005),
-                   ('2022-11-07', 1001, 1003),
-                   ('2022-11-08', 1001, 1004),
-                   ('2022-11-09', 1001, 1005),
-                   ('2022-11-10', 1001, 1003),
-                   ('2022-11-01', 1002, 1004),
-                   ('2022-11-02', 1002, 1005),
-                   ('2022-11-03', 1002, 1003),
-                   ('2022-11-04', 1002, 1004),
-                   ('2022-11-05', 1002, 1005),
-                   ('2022-11-06', 1002, 1003),
-                   ('2022-11-07', 1002, 1004),
-                   ('2022-11-08', 1002, 1005),
-                   ('2022-11-09', 1002, 1003),
-                   ('2022-11-10', 1002, 1004);
-
+            VALUES (Now(), 1001, 1003),
+                   (Now() - 1, 1001, 1004),
+                   (Now() - 2, 1001, 1005),
+                   (Now() - 3, 1001, 1003),
+                   (Now() - 4, 1001, 1004),
+                   (Now() - 5, 1001, 1005),
+                   (Now() - 6, 1001, 1003),
+                   (Now() - 7, 1001, 1004),
+                   (Now() - 8, 1001, 1005),
+                   (Now() - 9, 1001, 1003),
+                   (Now(), 1002, 1004),
+                   (Now() - 1, 1002, 1005),
+                   (Now() - 2, 1002, 1003),
+                   (Now() - 3, 1002, 1004),
+                   (Now() - 4, 1002, 1005),
+                   (Now() - 5, 1002, 1003),
+                   (Now() - 6, 1002, 1004),
+                   (Now() - 7, 1002, 1005),
+                   (Now() - 8, 1002, 1003),
+                   (Now() - 9, 1002, 1004),
+                   (Now(), 1000, 1004),
+                   (Now() - 1, 1000, 1003),
+                   (Now() - 2, 1000, 1003),
+                   (Now() - 3, 1000, 1004),
+                   (Now() - 4, 1000, 1003),
+                   (Now() - 5, 1000, 1003),
+                   (Now() - 6, 1000, 1004),
+                   (Now() - 7, 1000, 1005),
+                   (Now() - 8, 1000, 1005),
+                   (Now() - 9, 1000, 1004);
 
         </sql>
 

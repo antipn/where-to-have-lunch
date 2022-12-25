@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class VotingServiceImpl implements VotingService {
 
-    private final LocalTime acceptanceVoteTime = LocalTime.of(11, 0);
+    private final LocalTime ACCEPT_VOTE_TIME = LocalTime.of(11, 0);
 
     VoteRepository voteRepository;
     UserRepository userRepository;
@@ -50,7 +50,7 @@ public class VotingServiceImpl implements VotingService {
         Optional<Vote> voteInDb = voteRepository.findVoteByDateAndUserId(LocalDate.now(), userId);
 
 
-        if (LocalTime.now().isBefore(acceptanceVoteTime)
+        if (LocalTime.now().isBefore(ACCEPT_VOTE_TIME)
                 || (voteInDb.isEmpty())) {
 
             if (voteInDb.isPresent()) { //if we are updating vote
@@ -80,7 +80,7 @@ public class VotingServiceImpl implements VotingService {
     public void deleteVote(int userId) {
         Optional<Vote> vote = voteRepository.findVoteByDateAndUserId(LocalDate.now(), userId);
 
-        if (LocalTime.now().isBefore(acceptanceVoteTime)) {
+        if (LocalTime.now().isBefore(ACCEPT_VOTE_TIME)) {
             if (vote.isPresent()) {
                 voteRepository.delete(vote.get()); //discuss deleting and checkNotFoundWithId //ValidationUtil.checkNotFoundWithId(
             } else {

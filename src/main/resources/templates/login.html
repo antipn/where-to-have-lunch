@@ -1,77 +1,83 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymleaf.org">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Document</title>
 </head>
-
 <style>
     TABLE, TBODY, TR, TD, TH {
         text-align: left;
         padding: 0;
-        border-spacing: 0; /* or border-collapse:collapse */
+        border-spacing: 0;
+    }
+
+    BODY {
+
+        background: darkslategray;
     }
 </style>
 
 
 <body>
-<form th:action="@{/process_login}" method="post">
-    <main class="main">
-        <form class="form login-form">
-            <table>
-                <thead>
-                <tr>
-                    <h3 class="login-title">Вход в приложение "Where have to lunch"</h3>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Login</td>
-                    <td>
-                        <div class="input-container">
-                            <label for="email"></label>:
-                            <input type="email" name="email" id="email" placeholder="email"/>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Password</td>
-                    <td>
-                        <div class="input-container">
-                            <label for="password"></label>:
-                            <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    placeholder="пароль"
-                            />
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div th:if="${param.error}" style="color: red">
-                            <p class="text">неправильный email или пароль</p>
-                        </div>
-                    </td>
-                </tr>
+    <form th:action="@{/process_login}" method="post">
+        <main class="main">
+            <form class="form login-form">
+                <table>
+                    <thead>
+                    <tr>
+                        <h3 class="login-title">Enter in application "Where have to lunch"</h3>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Email</td>
+                        <td>
+                            <div class="input-container">
+                                <label for="email"></label>
+                                <input type="email" name="email" id="email" placeholder="email"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td>
+                            <div class="input-container">
+                                <label for="password"></label>
+                                <input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        placeholder="password"
+                                />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div th:if="${param.error}" style="color: red">
+                                <h4> <p class="text">wrong email or password</p></h4>
 
+                            </div>
+                        </td>
+                    </tr>
 
-                <tr>
-                    <td>
-                        <button class="btn btn-submit">Войти</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
-        <div class="login">
-            <span>Еще не зарегистрированы?</span>
-            <a th:href="@{registration}" class="login-link">Регистрация</a>
-        </div>
-    </main>
-</form>
+                    <tr>
+                        <td>
+                            <button class="btn btn-submit">Enter</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+            <div class="login">
+                <span>Not yet registered ?</span>
+                <a th:href="@{registration}" class="login-link">Registration page</a>
+            </div>
+        </main>
+    </form>
+
 </body>
 </html>

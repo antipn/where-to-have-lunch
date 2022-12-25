@@ -1,18 +1,21 @@
 package com.whtl.antipn.model;
 
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 
-@Entity
-@Table(name = "restaurants")
-@Data
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "restaurants")
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
@@ -33,5 +36,10 @@ public class Restaurant {
     @Column(name = "open", nullable = false)
     @NotBlank
     private boolean open = true;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
+    @JoinColumn(name = "restaurant", referencedColumnName = "id")
+    private List<Menu> menuList;
 
 }

@@ -1,11 +1,10 @@
 package com.whtl.antipn.controllers;
 
-import com.whtl.antipn.AuthorizedUser;
+import com.whtl.antipn.security.AuthorizedUser;
 import com.whtl.antipn.dto.VoteDto;
 import com.whtl.antipn.exception.VoteIsNotAllowedResponse;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.exception.VoteIsNotAllowedException;
-import com.whtl.antipn.services.VotingService;
 import com.whtl.antipn.exception.EntityNotFoundResponse;
 import com.whtl.antipn.services.VotingServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,9 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Vote controller", description = "The responsibilities of Vote controller are providing voting API: " +
@@ -42,15 +39,9 @@ public class VotingController {
     @PostMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> createVote(@RequestParam
                                               @Parameter(description = "The vote for restaurant by sending restId", required = true)
-                                              int vote,@AuthenticationPrincipal AuthorizedUser authUser) {
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        Authentication authentication = ...
-//        CustomUser customUser = (CustomUser)authentication.getPrincipal();
-//        int userId = customUser.getUserId();
-
-
-        int userId =1001;//auth.getName() ;// please get userId after applying spring security
-        return ResponseEntity.ok(votingService.saveVote(userId, vote));
+                                              int vote, @AuthenticationPrincipal AuthorizedUser authUser) {
+        //int userId =1001;
+        return ResponseEntity.ok(votingService.saveVote(authUser.getId(), vote));
     }
 
     @Operation(
@@ -58,9 +49,11 @@ public class VotingController {
             description = "It allows user to get to know his vote"
     )
     @GetMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> readVote() {
-        int userId = 1001;// // please get userId after applying spring security
-        return ResponseEntity.ok(votingService.findVote(userId));
+    public ResponseEntity<VoteDto> readVote(@AuthenticationPrincipal AuthorizedUser authUser) {
+        System.out.println("Пользователь c id " + authUser.getId() + " пытается узнать свой голос");
+        authUser.getId();
+        //int userId = 1001;
+        return ResponseEntity.ok(votingService.findVote(authUser.getId()));
     }
 
     @Operation(
@@ -68,9 +61,10 @@ public class VotingController {
             description = "It allows user to update his vote until 11 o'clock"
     )
     @PutMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> updateVote(@RequestParam @Parameter(description = "The vote for the restaurant", required = true) int restId) {
-        int userId = 1001;// please get userId after applying spring security
-        return ResponseEntity.ok(votingService.updateVote(userId, restId));
+    public ResponseEntity<VoteDto> updateVote(@RequestParam @Parameter(description = "The vote for the restaurant", required = true) int restId,
+                                              @AuthenticationPrincipal AuthorizedUser authUser) {
+        //int userId = 1001;
+        return ResponseEntity.ok(votingService.updateVote(authUser.getId(), restId));
     }
 
     @Operation(
@@ -78,9 +72,9 @@ public class VotingController {
             description = "It allows user to delete his vote until 11 o'clock"
     )
     @DeleteMapping("/api/v1/vote")
-    public ResponseEntity<Void> deleteVote() {
-        int userId = 1;// please get userId after applying spring security
-        votingService.deleteVote(userId);
+    public ResponseEntity<Void> deleteVote(@AuthenticationPrincipal AuthorizedUser authUser) {
+        //int userId = 1
+        votingService.deleteVote(authUser.getId());
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
