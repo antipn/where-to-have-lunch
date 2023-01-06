@@ -1,17 +1,13 @@
 package com.whtl.antipn.model;
 
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
-
 
 @Getter
 @Setter
@@ -25,7 +21,6 @@ public class User {
     @SequenceGenerator(name = "global_seq", sequenceName = "hibernate_sequence_global", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
-
 
     @Column(name = "email", nullable = false, unique = true)
     @Email
@@ -51,6 +46,5 @@ public class User {
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
-
 
 }

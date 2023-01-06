@@ -8,8 +8,6 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
-//@Entity
-//@Table(name="menus")
 @Data
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     @SequenceGenerator(name = "global_seq", sequenceName = "hibernate_sequence_global", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Integer id;
 
     @Column(name = "date", nullable = false)
     @NotBlank
@@ -32,7 +30,9 @@ public class Menu {
 //    @JoinColumn(name = "restaurant", nullable = false)
 //    @NotBlank
 //    @ManyToOne(fetch = FetchType.LAZY)
-    private int restaurant;
+
+    @Column(name="restaurant")
+    private Integer restaurant;
 
     @Column(name = "name", nullable = false)
     @NotBlank
@@ -43,6 +43,5 @@ public class Menu {
     @NotBlank
     @PositiveOrZero
     private Double price;
-
 
 }

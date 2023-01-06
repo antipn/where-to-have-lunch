@@ -6,7 +6,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "votes")@Data
 @Getter
@@ -19,7 +18,7 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     @SequenceGenerator(name = "global_seq", sequenceName = "hibernate_sequence_global", allocationSize = 1)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Integer id;
 
     @Column(name = "date")
     @NotBlank
@@ -34,4 +33,14 @@ public class Vote {
     @NotBlank
     @ManyToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                ", date=" + date +
+                ", user=" + user +
+                ", restaurant=" + restaurant +
+                '}';
+    }
 }

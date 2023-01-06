@@ -37,15 +37,49 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+
+    //https://stackoverflow.com/questions/37671125/how-to-configure-spring-security-to-allow-swagger-url-to-be-accessed-without-aut
+    private static final String[] AUTH_WHITELIST = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+            // other public endpoints of your API may be appended to this array
+    };
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-       return http
+        return http
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> {
                     auth
+                            .antMatchers(AUTH_WHITELIST).permitAll()//swagger
                             .antMatchers("/registration", "/registration/save", "/login", "/error").permitAll()
+
+                            .antMatchers(HttpMethod.POST,"/api/v1/restaurants").hasRole("ADMIN")
+                            .antMatchers(HttpMethod.PUT,"/api/v1/restaurants").hasRole("ADMIN")
+                            .antMatchers(HttpMethod.DELETE,"/api/v1/restaurants").hasRole("ADMIN")
+
+                            .antMatchers(HttpMethod.GET,"/api/v1/vote").hasRole("USER")
+                            .antMatchers(HttpMethod.POST,"/api/v1/vote").hasRole("USER")
+                            .antMatchers(HttpMethod.PUT,"/api/v1/vote").hasRole("USER")
+                            .antMatchers(HttpMethod.DELETE,"/api/v1/vote").hasRole("USER")
+                            //.antMatchers(ADMIN_WHITELIST).hasRole("ADMIN");
                             .anyRequest().authenticated();
+
+//                    http.authorizeRequests().antMatchers(HttpMethod.GET).permitAll();
+//                    http.authorizeRequests().antMatchers(HttpMethod.POST).denyAll();
+//                    http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/you/can/alsoSpecifyAPath").denyAll();
+//                    http.authorizeRequests().antMatchers(HttpMethod.PATCH,"/path/is/Case/Insensitive").denyAll();
+//                    http.authorizeRequests().antMatchers(HttpMethod.PUT,"/and/can/haveWildcards/*").denyAll();
 
                 })
 

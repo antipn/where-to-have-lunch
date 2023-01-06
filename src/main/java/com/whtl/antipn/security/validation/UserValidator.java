@@ -10,7 +10,6 @@ import org.springframework.validation.Validator;
 
 import java.util.Optional;
 
-
 @Component
 public class UserValidator implements Validator {
     private final EqualService equalService;

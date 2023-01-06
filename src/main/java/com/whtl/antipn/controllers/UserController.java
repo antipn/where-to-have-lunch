@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @RestController
 public class UserController {
-
     private final UserService userService;
     private final UserValidator userValidator;
 
@@ -45,7 +44,6 @@ public class UserController {
 
     }
 
-
     @PostMapping(value = "/registration")
     public ModelAndView saveRegister(@ModelAttribute("userDto") @Valid UserDto userDto, BindingResult bindingResult) {
         userValidator.validate(userDto, bindingResult);
@@ -67,11 +65,9 @@ public class UserController {
             ModelAndView welcome = new ModelAndView("welcome");
             welcome.addObject("email", email);
             return welcome;
-
         } catch (UsernameNotFoundException exception) {
             ModelAndView login = new ModelAndView("login");
             return login;
         }
-
     }
 }

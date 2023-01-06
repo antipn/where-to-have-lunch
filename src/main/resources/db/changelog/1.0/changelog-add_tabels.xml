@@ -131,7 +131,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <!-- проверка на уникаольность помимо первичного ключа-->
+        <!-- проверка на уникальность помимо первичного ключа-->
         <addUniqueConstraint tableName="menus" columnNames="date,restaurant,name,price"/>
 
         <addForeignKeyConstraint baseTableName="menus" baseColumnNames="restaurant"

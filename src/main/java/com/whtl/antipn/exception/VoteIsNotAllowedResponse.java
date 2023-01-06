@@ -14,5 +14,4 @@ public class VoteIsNotAllowedResponse {
     private long timestamp;
     private int userId;
 
-
 }

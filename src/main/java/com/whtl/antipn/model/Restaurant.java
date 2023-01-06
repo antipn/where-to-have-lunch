@@ -1,13 +1,10 @@
 package com.whtl.antipn.model;
 
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 
 @Getter
@@ -37,9 +34,9 @@ public class Restaurant {
     @NotBlank
     private boolean open = true;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SUBSELECT)
-    @JoinColumn(name = "restaurant", referencedColumnName = "id")
-    private List<Menu> menuList;
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @Fetch(FetchMode.SUBSELECT)
+//    @JoinColumn(name = "restaurant", referencedColumnName = "id")
+//    private List<Menu> menuList;
 
 }

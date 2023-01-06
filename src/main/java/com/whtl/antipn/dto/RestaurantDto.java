@@ -1,6 +1,5 @@
 package com.whtl.antipn.dto;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Entity of restaurant by restairant id, name, address, and open/closed status")
+@Schema(description = "Entity of restaurant by restaurant id, name, address, and open/closed status")
 public class RestaurantDto {
 
     @Schema(description = "Restaurant id", example = "11")

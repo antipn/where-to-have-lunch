@@ -29,18 +29,15 @@ public class VotingController {
         this.votingService = votingService;
     }
 
-    //vote
     @Operation(
             summary = "The providing possibility for user to vote for some restaurant",
             description = "It allows user to vote for restaurant until 11 o'clock"
     )
-
-
     @PostMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> createVote(@RequestParam
+    public ResponseEntity<VoteDto> createVote(@RequestParam(name = "restId")
                                               @Parameter(description = "The vote for restaurant by sending restId", required = true)
-                                              int vote, @AuthenticationPrincipal AuthorizedUser authUser) {
-        //int userId =1001;
+                                              int vote,
+                                              @AuthenticationPrincipal AuthorizedUser authUser) {
         return ResponseEntity.ok(votingService.saveVote(authUser.getId(), vote));
     }
 
@@ -50,9 +47,6 @@ public class VotingController {
     )
     @GetMapping("/api/v1/vote")
     public ResponseEntity<VoteDto> readVote(@AuthenticationPrincipal AuthorizedUser authUser) {
-        System.out.println("Пользователь c id " + authUser.getId() + " пытается узнать свой голос");
-        authUser.getId();
-        //int userId = 1001;
         return ResponseEntity.ok(votingService.findVote(authUser.getId()));
     }
 
@@ -61,9 +55,9 @@ public class VotingController {
             description = "It allows user to update his vote until 11 o'clock"
     )
     @PutMapping("/api/v1/vote")
-    public ResponseEntity<VoteDto> updateVote(@RequestParam @Parameter(description = "The vote for the restaurant", required = true) int restId,
+    public ResponseEntity<VoteDto> updateVote(@RequestParam(name = "restId")
+                                              @Parameter(description = "The vote for the restaurant", required = true) int restId,
                                               @AuthenticationPrincipal AuthorizedUser authUser) {
-        //int userId = 1001;
         return ResponseEntity.ok(votingService.updateVote(authUser.getId(), restId));
     }
 
@@ -73,7 +67,6 @@ public class VotingController {
     )
     @DeleteMapping("/api/v1/vote")
     public ResponseEntity<Void> deleteVote(@AuthenticationPrincipal AuthorizedUser authUser) {
-        //int userId = 1
         votingService.deleteVote(authUser.getId());
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

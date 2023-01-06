@@ -13,10 +13,10 @@ import java.time.LocalDate;
 @Schema(description = "Entity of menu by dish name and dish price")
 public class MenuDto {
 
-    @Schema(description = "Date of menu's position", example = "2022-12-25")
+    @Schema(description = "Date of menu's position", example = "2023-01-06")
     private LocalDate date;
     @Schema(description = "Restaurant id", example = "1003")
-    private int restaurant;
+    private Integer restaurant;
     @Schema(description = "Name of dish", example = "Salmon fist plate")
     private String name;
     @Schema(description = "Price for dish", example = "100.5")

@@ -10,5 +10,7 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
 
     List<Menu> findMenuByRestaurantAndDate(int restId, LocalDate date);
 
-    void deleteMenuByRestaurantAndDate(int restId, LocalDate date);
+    void deleteMenusByRestaurantAndDate(int restId, LocalDate date);
+
+
 }

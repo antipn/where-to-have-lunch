@@ -2,7 +2,6 @@ package com.whtl.antipn.dto;
 
 import lombok.*;
 
-import java.util.Date;
 
 @Getter
 @Setter

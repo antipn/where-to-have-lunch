@@ -1,5 +1,6 @@
 package com.whtl.antipn.services;
 
+import com.whtl.antipn.dto.IncomeMenuDto;
 import com.whtl.antipn.dto.MenuDto;
 import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.dto.RestaurantDto;
@@ -25,14 +26,16 @@ public interface RestaurantAndMenuService {
 
     public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate);
 
+    public Restaurant findRestaurantByName(String restName);
+
     //menu
-    public List<MenuDto> findMenu(int restId);
+    //public List<MenuDto> findMenu(int restId);
 
     public List<MenuDto> findMenuOnDate(int restId, LocalDate date);
 
-    public List<MenuDto> saveMenu( int restId,List<MenuDto> menuInput);
+    public List<MenuDto> saveMenu(int restId, LocalDate localDate, List<IncomeMenuDto> incomeMenuDtoList);
 
-    public void deleteMenu(LocalDate localDate, int restId);
+    public void deleteMenu(int restId, LocalDate localDate);
 
-    public List<MenuDto> updateMenu(LocalDate localDate, int restId, List<MenuDto> menuDtoList);
+    public List<MenuDto> updateMenu(int restId, LocalDate localDate, List<IncomeMenuDto> incomeMenuDtoList);
 }
