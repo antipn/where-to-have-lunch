@@ -3,7 +3,6 @@ package com.whtl.antipn.services;
 import com.whtl.antipn.dto.IncomeMenuDto;
 import com.whtl.antipn.dto.MenuDto;
 import com.whtl.antipn.dto.RestaurantDto;
-import com.whtl.antipn.dto.RestaurantScoreDto;
 import com.whtl.antipn.exception.EntityAlreadyExistsException;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.mapper.MenuMapper;
@@ -84,7 +83,7 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
 
     @Transactional
     @Override
-    public RestaurantDto createRestaurant(RestaurantDto restaurantDto) { //done
+    public RestaurantDto createRestaurant(RestaurantDto restaurantDto) {
         Restaurant entity = RestaurantMapper.RESTAURANT_MAPPER.toEntity(restaurantDto);
         restaurantRepository.save(entity);
         return restaurantDto;
@@ -97,7 +96,7 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
 
     @Transactional
     @Override
-    public void deleteRestaurant(int restId) { //проверить удаление ресторана которого нет
+    public void deleteRestaurant(int restId) {
         try {
             restaurantRepository.deleteById(restId);
         } catch (Exception e) {
@@ -106,22 +105,9 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
 
     }
 
-    @Override
-    public List<RestaurantScoreDto> findRestaurantsScores() {
-        LocalDate localDate = now();
-        return null;
-    }
-
-    @Override
-    public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate) {
-        return null;
-    }
-
-
-    //MENU
+        //MENU
     @Override
     public List<MenuDto> findMenuOnDate(int restId, LocalDate localDate) {
-
         if (localDate == null) {
             localDate = now();
         }
@@ -149,7 +135,6 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
     @Transactional
     @Override
     public List<MenuDto> updateMenu(int restId, LocalDate localDate, List<IncomeMenuDto> incomeMenuDtoList) {
-        //for updating we will use deleting and posting again new menu
         deleteMenu(restId, localDate);
         saveMenu(restId, localDate, incomeMenuDtoList);
 

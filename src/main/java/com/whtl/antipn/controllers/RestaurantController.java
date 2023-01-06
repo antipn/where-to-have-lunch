@@ -98,19 +98,6 @@ public class RestaurantController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "The providing possibility for administrators and users to see restaurants rating on today or on date",
-            description = "It allows for administrators and users to see restaurants rating on today or on date"
-    )
-    @GetMapping("/rating")// расчет рейтингов нужно рассчитывать в реальном времени
-    public ResponseEntity<List<RestaurantScoreDto>> getRating(@RequestParam(value = "date", required = false)
-                                                              @DateTimeFormat(pattern = "dd.MM.yyyy")
-                                                              @Parameter(description = "Look up date in format dd-MM-yyyy for getting rating", required = false)
-                                                              LocalDate localDate) {
-        System.out.println("Выводим рейтинг ресторанов");
-        return ResponseEntity.ok(restaurantService.findRestaurantsScoresOnDate(localDate));
-    }
-
     //menu
     @Operation(
             summary = "The providing possibility for administrators and users to see restaurant menu on today (default )or on date",

@@ -22,15 +22,10 @@ public interface RestaurantAndMenuService {
 
     public void deleteRestaurant(int restId);
 
-    public List<RestaurantScoreDto> findRestaurantsScores();
-
-    public List<RestaurantScoreDto> findRestaurantsScoresOnDate(LocalDate localDate);
 
     public Restaurant findRestaurantByName(String restName);
 
     //menu
-    //public List<MenuDto> findMenu(int restId);
-
     public List<MenuDto> findMenuOnDate(int restId, LocalDate date);
 
     public List<MenuDto> saveMenu(int restId, LocalDate localDate, List<IncomeMenuDto> incomeMenuDtoList);

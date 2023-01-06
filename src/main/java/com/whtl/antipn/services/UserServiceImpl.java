@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
     public UserDto userRegistration(UserDto userDto) {
         User entity = UserMapper.USER_MAPPER.mapFromDto(userDto);
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
-        entity.setRoles(Set.of(USER));//?????
+        entity.setRoles(Set.of(USER));
         if ((userRepository.findUserByEmail(entity.getEmail())).isPresent()) {
             throw new RuntimeException("User with such email " + entity.getEmail() + " already exits.");
         }
