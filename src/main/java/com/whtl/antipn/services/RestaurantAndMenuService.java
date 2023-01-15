@@ -26,6 +26,9 @@ public interface RestaurantAndMenuService {
     public Restaurant findRestaurantByName(String restName);
 
     //menu
+
+    public List<MenuDto> findAllMenuOnDate(LocalDate date);
+
     public List<MenuDto> findMenuOnDate(int restId, LocalDate date);
 
     public List<MenuDto> saveMenu(int restId, LocalDate localDate, List<IncomeMenuDto> incomeMenuDtoList);

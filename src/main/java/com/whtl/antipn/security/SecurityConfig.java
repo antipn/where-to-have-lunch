@@ -72,15 +72,7 @@ public class SecurityConfig {
                             .antMatchers(HttpMethod.POST,"/api/v1/vote").hasRole("USER")
                             .antMatchers(HttpMethod.PUT,"/api/v1/vote").hasRole("USER")
                             .antMatchers(HttpMethod.DELETE,"/api/v1/vote").hasRole("USER")
-                            //.antMatchers(ADMIN_WHITELIST).hasRole("ADMIN");
                             .anyRequest().authenticated();
-
-//                    http.authorizeRequests().antMatchers(HttpMethod.GET).permitAll();
-//                    http.authorizeRequests().antMatchers(HttpMethod.POST).denyAll();
-//                    http.authorizeRequests().antMatchers(HttpMethod.DELETE,"/you/can/alsoSpecifyAPath").denyAll();
-//                    http.authorizeRequests().antMatchers(HttpMethod.PATCH,"/path/is/Case/Insensitive").denyAll();
-//                    http.authorizeRequests().antMatchers(HttpMethod.PUT,"/and/can/haveWildcards/*").denyAll();
-
                 })
 
                 .formLogin(formLogin -> {
@@ -90,6 +82,7 @@ public class SecurityConfig {
                     formLogin.defaultSuccessUrl("/welcome", true);
                     formLogin.failureUrl("/login?error");
                 })
+
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/html/login")

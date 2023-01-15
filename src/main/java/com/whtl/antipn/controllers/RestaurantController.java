@@ -100,14 +100,22 @@ public class RestaurantController {
 
     //menu
     @Operation(
-            summary = "The providing possibility for administrators and users to see restaurant menu on today (default )or on date",
-            description = "It allows for administrators and users to see restaurant menu on today or on date"
+            summary = "The providing possibility for administrators and users to see all menus on today (default )or on date",
+            description = "It allows for administrators and users to see all menus on today or on date"
     )
-    @GetMapping("/{rest_id}/menu") //tested 06 01 2023 ++
+
+    @GetMapping("/all/menu")
+    public ResponseEntity<List<MenuDto>> getAllMenuForAllRestaurant(
+            @RequestParam(name = "date", required = false)
+            @Parameter(description = "Look up date in format dd-MM-yyyy")
+            @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate localDate) {
+        return ResponseEntity.ok(restaurantService.findAllMenuOnDate(localDate));
+    }
+
+    @GetMapping("/{rest_id}/menu")
     public ResponseEntity<List<MenuDto>> getMenu(@PathVariable(name = "rest_id")
                                                  @Parameter(description = "Look up value for finding restaurant's menu by id", required = true)
                                                  int restId,
-
                                                  @RequestParam(name = "date", required = false)
                                                  @Parameter(description = "Look up date in format dd-MM-yyyy")
                                                  @DateTimeFormat(pattern = "dd.MM.yyyy") LocalDate localDate) {

@@ -105,7 +105,17 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
 
     }
 
-        //MENU
+    //MENU
+
+    @Override
+    public List<MenuDto> findAllMenuOnDate(LocalDate localDate) {
+        if (localDate == null) {
+            localDate = now();
+        }
+        return MenuMapper.MENU_MAPPER.toDtoList(menuRepository.findAllByDate(localDate));
+    }
+
+
     @Override
     public List<MenuDto> findMenuOnDate(int restId, LocalDate localDate) {
         if (localDate == null) {
