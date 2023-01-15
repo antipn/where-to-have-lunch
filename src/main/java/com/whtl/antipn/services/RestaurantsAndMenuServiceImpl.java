@@ -7,7 +7,6 @@ import com.whtl.antipn.exception.EntityAlreadyExistsException;
 import com.whtl.antipn.exception.EntityNotFoundException;
 import com.whtl.antipn.mapper.MenuMapper;
 import com.whtl.antipn.mapper.RestaurantMapper;
-import com.whtl.antipn.mapper.RestaurantScoreMapper;
 import com.whtl.antipn.model.Restaurant;
 import com.whtl.antipn.repositories.MenuRepository;
 import com.whtl.antipn.repositories.RestaurantRepository;
@@ -30,17 +29,15 @@ public class RestaurantsAndMenuServiceImpl implements RestaurantAndMenuService {
     RestaurantRepository restaurantRepository;
     UserRepository userRepository;
 
-    RestaurantScoreMapper restaurantScoreMapper;
 
     @Autowired
     public RestaurantsAndMenuServiceImpl(MenuRepository menuRepository,
                                          RestaurantRepository restaurantRepository,
-                                         UserRepository userRepository,
-                                         RestaurantScoreMapper restaurantScoreMapper) {
+                                         UserRepository userRepository
+    ) {
         this.menuRepository = menuRepository;
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
-        this.restaurantScoreMapper = restaurantScoreMapper;
     }
 
 
